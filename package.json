@@ -20,7 +20,6 @@
     
     "hexo-server": "latest",
     "hexo-word-counter": "latest",
-    "hexo-deployer-git": "latest",
     
     "hexo-theme-next": "latest",
     "hexo-waline-next": "latest",
