@@ -45,20 +45,6 @@ scheme: Gemini
 # Dark Mode
 darkmode: true
 
-# Dark Mode js
-darkmode_js:
-  enable: false
-  isActivated: true
-  bottom: '64px'
-  right: '36px'
-  left: 'unset'
-  time: '0.5s'
-  mixColor: 'transparent'
-  backgroundColor: 'transparent'
-  label: '🌓'
-
-
-
 # ---------------------------------------------------------------
 # Site Information Settings
 # ---------------------------------------------------------------
@@ -156,9 +142,9 @@ avatar:
   # Replace the default image and set the url here.
   url: /images/avatar.png
   # If true, the avatar will be displayed in circle.
-  rounded: true
+  rounded: false
   # If true, the avatar will be rotated with the cursor.
-  rotated: true
+  rotated: false
 
 # Posts / Categories / Tags in sidebar.
 site_state: true
