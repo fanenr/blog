@@ -840,3 +840,87 @@ struct acct
 
 ## 用户标识
 
+&emsp;&emsp;进程可以很容易的获取其实际用户 ID 和有效用户 ID。如果希望找到运行该程序用户的登录名，一种简单地做法是调用 getpwuid(getuid())，但是如果一个用户有多个登录名，这些登录名对应同一个用户 ID，则应该使用 getlogin 函数获得此登录名：
+
+```c
+#include <unistd.h>
+
+char *getlogin(void);
+
+/* Returns: pointer to string giving login name if OK, NULL on error */
+```
+
+&emsp;&emsp;如果调用此函数的进程没有连接到用户登录时所用的终端，则函数会失败。
+
+## 进程调度
+
+&emsp;&emsp;UNIX 系统历史上对进程提供的只是基于调度优先级的粗粒度的控制。调度策略和调度优先级是由内核确定的，进程可以通过调整 nice 值选择以更低优先级运行，只有特权进程允许提高调度权限。
+
+&emsp;&emsp;POSIX 实时扩展增加了在多个调度类别中选择的接口，以允许进程进一步细调行为。POSIX 的 XSI 扩展中包含了用于调整 nice 值的接口。
+
+&emsp;&emsp;SUS 中 nice 值的范围在 0 ~ (2\*NZERO)-1 之间，有些实现支持 0 ~ 2\*NZERO。nice 值越小，优先级越高，NZERO 是进程默认的 nice 值。
+
+&emsp;&emsp;进程可以通过 nice 函数获取或更改它的 nice 值，使用这个函数，进程只能影响自己的 nice 值，而不能影响其他任何进程的 nice 值：
+
+```c
+#include <unistd.h>
+
+int nice(int incr);
+
+/* Returns: new nice value − NZERO if OK, −1 on error */
+```
+
+&emsp;&emsp;参数 *incr* 被增加到调用进程的 nice 值上。如果 *incr* 太大，系统会直接把它降低到最大合法值，并且不给出提示。类似的，如果 *incr* 太小，系统也会直接把它提高到最小合法值。由于 -1 既是合法的返回值也是出错返回值，所以要确定 nice 是否调用成功必须同时检查 errno。
+
+&emsp;&emsp;getpriority 函数可以像 nice 函数一样用于获取进程的 nice 值，但是 getpriority 还可以获取一组相关进程的 nice 值：
+
+```c
+#include <sys/resource.h>
+
+int setpriority(int which, id_t who, int value);
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;参数 *which* 可以取 3 个值：PRIO_PROCESS 表示进程，PRIO_PGRP 表示进程组，PRIO_USER 表示实际用户 ID。参数 *which* 控制 *who* 是如何被解释的，*who* 参数选择感兴趣的一个或多个进程。如果 *who* 为 0，则表示调用进程，进程组或用户。如果 *which* 参数作用于多个进程，则返回所有作用进程中优先级最高的 nice 值。
+
+&emsp;&emsp;setpriority 函数可用于为进程，进程组和属于特定用户的所有进程设置优先级：
+
+```c
+#include <sys/resource.h>
+
+int setpriority(int which, id_t who, int value);
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;参数 *which* 和参数 *who* 与 getpriority 中的含义一致，参数 *value* 将被增加到 NZERO 上，然后变为新的 nice 值。
+
+## 进程时间
+
+&emsp;&emsp;任一进程都可以调用 times 函数，以获取度量调用进程以及已终止子进程时间的 3 种值：墙上时钟时间，用户 CPU 时间以及系统 CPU 时间：
+
+```c
+#include <sys/times.h>
+
+clock_t times(struct tms *buf );
+
+/* Returns: elapsed wall clock time in clock ticks if OK, −1 on error */
+```
+
+&emsp;&emsp;此函数填写由 *buf* 指向的 tms 结构，该结构定义如下：
+
+```c
+struct tms {
+    clock_t tms_utime; /* user CPU time */
+    clock_t tms_stime; /* system CPU time */
+    clock_t tms_cutime; /* user CPU time, terminated children */
+    clock_t tms_cstime; /* system CPU time, terminated children */
+};
+```
+
+&emsp;&emsp;注意，此结构不包含墙上时钟时间，因为 times 会将墙上时钟时间作为函数返回值返回。针对子进程的两个时间是进程调用 wait 函数族已等待到的时间。
+
+&emsp;&emsp;clock_t 类型值可用 _SC_CLK_TCK (由 sysconf 函数返回的每秒钟时钟滴答数) 转换成秒数。
+
+>   大多数 UNIX 实现都提供了 getrusage(2) 函数，该函数返回 CPU 时间以及指示资源使用情况的另外 14 个值。
