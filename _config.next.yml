@@ -695,7 +695,7 @@ waline:
   dark: auto
   
   # Waline server address url, you should set this to your own link
-  serverURL: https://waline.blog.arthur63.top
+  serverURL: https://waline.arthur63.top/
   
   # Waline library CDN url, you can set this to your preferred CDN
   libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
