@@ -18,6 +18,8 @@ sticky: 1
 
 >   23-10-12：目前已经绑定了域名，但是还是部署在 GitHub 上。
 
+>   23-10-24：现在博客基于 GitHub Actions 实现自动化部署。
+
 &emsp;&emsp;之前评论系统使用的是 valine，部署在 Leancloud 上。后来换了一个新的 Next 版本，加上 valine 的评论头像不显示，索性换成 disqus 了，国内是看不了评论也无法评论的。
 
 >   23-10-23：目前已更换到 waline。
