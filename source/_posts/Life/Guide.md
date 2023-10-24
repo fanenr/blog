@@ -10,6 +10,10 @@ sticky: 1
 
 &emsp;&emsp;本站所有文章基本上都是纯手打，逐句斟酌的，大部分图片内容都是手工截图的。
 
+&emsp;&emsp;目前，博客已从 GitHub Pages 迁移到 CloudFlare Pages，包括域名也放在 CF 下解析了，但源码还是完全开放，并托管在 GitHub 上。
+
+&emsp;&emsp;我自测国内访问是降速了，但是科学访问速度很乐观。重要的是：CF 托管的 Pages 部署非常快。
+
 <!-- more -->
 
 ## 关于网站
