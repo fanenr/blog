@@ -1,0 +1,39 @@
+{
+  "name": "hexo-site",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "hexo clean",
+    "build": "hexo generate",
+    "deploy": "hexo deploy",
+    "server": "hexo server"
+  },
+  
+  "hexo": {
+    "version": "6.3.0"
+  },
+  
+  "dependencies": {
+    "css": "latest",
+    "hexo": "6.3.0",
+    "pjax": "latest",
+    
+    "hexo-server": "latest",
+    "hexo-word-counter": "latest",
+    "hexo-deployer-git": "latest",
+    
+    "hexo-theme-next": "latest",
+    "hexo-waline-next": "latest",
+    "hexo-next-darkmode": "latest",
+    
+    "hexo-generator-tag": "latest",
+    "hexo-generator-index": "latest",
+    "hexo-generator-archive": "latest",
+    "hexo-generator-category": "latest",
+    "hexo-generator-searchdb": "latest",
+    
+    "hexo-renderer-ejs": "latest",
+    "hexo-renderer-stylus": "latest",
+    "hexo-renderer-markdown-it": "latest"
+  }
+}
