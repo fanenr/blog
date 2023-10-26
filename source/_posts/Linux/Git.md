@@ -280,6 +280,12 @@ git fetch origin
 
 &emsp;&emsp;注意：fetch 只是简单的拉取远程仓库的数据，它不会修改本地仓库的信息，也不会自动合并。
 
+&emsp;&emsp;fetch 默认拉取远程仓库的所有分支，可以手工指定拉取哪些分支：
+
+```bash
+git fetch origin master
+```
+
 ### 推送本地分支
 
 &emsp;&emsp;push 命令用于将本地记录推送到上游：
@@ -289,6 +295,22 @@ git push origin master
 ```
 
 &emsp;&emsp;只有当用户有所克隆服务器的写入权限，并且之前没有人推送过时，这条命令才能生效。当和其他人在同一时间克隆，但他们先推送到上游然后用户再推送到上游时，用户的推送就会毫无疑问地被拒绝。用户必须先抓取他们的工作并将其合并进本地仓库后才能推送。
+
+&emsp;&emsp;push 的完整语法是：
+
+```bash
+git push <remote> <local_branch>:<remote_branch>
+```
+
+&emsp;&emsp;可以省略远程分支名，这代表远程分支名和本地分支同名。
+
+&emsp;&emsp;如果远程仓库是一个空仓库，那么 push 很可能失败，因为 push 不知道要推送到远程仓库的哪个分支。可以给 push 加上 -u 选项，这将为本地分支关联上游分支：
+
+```bash
+git push -u origin master
+```
+
+&emsp;&emsp;如果远程仓库不存在 master，那么 -u 会自动创建。此后，本地分支会跟踪这个远程分支。
 
 ## 分支
 
@@ -336,6 +358,29 @@ git merge issue53
 &emsp;&emsp;因为 merge 涉及 3 个文件快照，所以它也叫三方合并：
 
 ![](05.png)
+
+### 查询分支
+
+&emsp;&emsp;branch 命令用于查询本地分支：
+
+```bash
+git branch
+git branch -v
+```
+
+&emsp;&emsp;二者只列出所有本地仓库中的分支，加上 -v 选项时，它会附加一些提交信息。
+
+&emsp;&emsp;branch 的 -vv 选项会显示本地分支的上游情况：
+
+```bash
+git branch -vv
+```
+
+&emsp;&emsp;如果要查看所有分支，包括远程仓库的分支，可以使用 -a 选项：
+
+```bash
+git branch -a
+```
 
 ### 合并冲突
 
@@ -401,7 +446,10 @@ git checkout -b master
 
 ```bash
 git checkout -b sf origin/serverfix
+git push -u origin master
 ```
+
+&emsp;&emsp;后一种方式会在推送的同时改变本地分支跟踪的上游。
 
 -----
 
