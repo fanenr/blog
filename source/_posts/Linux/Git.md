@@ -11,7 +11,7 @@ categories:
 
 <!-- more -->
 
-## Basic
+## 基础
 
 &emsp;&emsp;Git 对待数据的方式类似快照流，不同于其他很多基于差异流的版本控制系统。Git 的每次 commit 都是一次对所有文件的快照：
 
@@ -19,7 +19,7 @@ categories:
 
 &emsp;&emsp;每当用户提交更新或保存项目状态时，Git 就会对当时的全部文件创建一个快照并保存这个快照的索引。为了效率，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。
 
-### install
+### 安装
 
 &emsp;&emsp;安装 Git 很简单：
 
@@ -27,7 +27,7 @@ categories:
 sudo dnf in git-all
 ```
 
-### config
+### 配置
 
 &emsp;&emsp;安装 Git 后需要配置一些变量，这些变量将控制 Git 的外观和行为，它们存储在 3 个不同的位置：
 
@@ -92,7 +92,7 @@ git config --global alias.co checkout
 git config --global alias.unstage 'restore --staged'
 ```
 
-### init
+### 本地仓库
 
 &emsp;&emsp;获取 Git 仓库的两种方法之一是使用 init 命令，它在本地初始化一个新的仓库：
 
@@ -103,7 +103,7 @@ git init
 
 &emsp;&emsp;它会创建一个 .git 目录用于存放仓库信息。
 
-### clone
+### 克隆仓库
 
 &emsp;&emsp;另一种获取 Git 仓库的方法是使用 clone 命令，它克隆一个已有的仓库到本地：
 
@@ -120,7 +120,7 @@ git clone https://github.com/libgit2/libgit2 .
 
 &emsp;&emsp;&emsp;&emsp;Git 支持很多数据传输协议：https，git，ssh 等。
 
-### status
+### 查看状态
 
 &emsp;&emsp;一个 Git 仓库中所有文件只有两种状态：未跟踪和已跟踪。具体来说，已跟踪状态又分为 3 种，一个文件如果已被跟踪，则说明它已被纳入版本管理中。可以使用 status 命令查看仓库详细信息：
 
@@ -150,7 +150,7 @@ M lib/simplegit.rb
 
 &emsp;&emsp;新添加的未跟踪文件前面有 ?? 标记，新添加到暂存区中的文件前面有 A 标记，修改过的文件前面有 M 标记。输出中有两栏，左栏指明了暂存区的状态，右栏指明了工作区的状态。例如，上面的状态报告显示： README 文件在工作区已修改但尚未暂存，而 lib/simplegit.rb 文件已修改且已暂存。Rakefile 文件已修改，暂存后又作了修改，因此该文件的修改中既有已暂存的部分，又有未暂存的部分。
 
-### add
+### 暂存文件
 
 &emsp;&emsp;add 是一个多功能命令：可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等。
 
@@ -170,7 +170,7 @@ git add modfile
 
 &emsp;&emsp;modfile 是一个已跟踪的文件，但是它被修改了，使用 add 将它加入暂存区中。
 
-### commit
+### 创建提交
 
 &emsp;&emsp;commit 用于向仓库提交一条记录，它只会提交暂存区中的所有内容：
 
@@ -202,7 +202,7 @@ git commit --amend
 
 &emsp;&emsp;它的效果就像：在原记录的基础上增加一条提交记录，然后删除原记录。如果修改提交时暂存区非空，则暂存区的内容会随着 --amend 一起被提交。
 
-### reset
+### 取消暂存
 
 &emsp;&emsp;reset 也是一个多功能命令，其中常用的一个功能就是取消暂存某个文件：
 
@@ -218,7 +218,7 @@ git reset HEAD filename
 git restore --staged filename
 ```
 
-### checkout
+### 检出文件
 
 &emsp;&emsp;checkout 支持的功能非常多，可以使用它来放弃工作区中的修改，以上一次提交时的状态恢复它：
 
@@ -228,7 +228,7 @@ git checkout -- filename
 
 &emsp;&emsp;如果 filename 已被修改 (但未暂存)，那么 checkout -- 命令将丢弃这些修改，并将恢复它到上一次提交时的状态。
 
-### remote
+### 远程仓库
 
 &emsp;&emsp;clone 一个远程仓库时 Git 会自动保存远程仓库的信息，可以使用 remote 命令查看所有远程仓库的信息：
 
@@ -268,9 +268,7 @@ git remote rename origin newname
 git remote remove origin
 ```
 
------
-
-### fetch
+### 拉取远程仓库
 
 &emsp;&emsp;fetch 命令用于拉取远程仓库的数据到本地：
 
@@ -282,7 +280,7 @@ git fetch origin
 
 &emsp;&emsp;注意：fetch 只是简单的拉取远程仓库的数据，它不会修改本地仓库的信息，也不会自动合并。
 
-### push
+### 推送本地分支
 
 &emsp;&emsp;push 命令用于将本地记录推送到上游：
 
@@ -293,7 +291,7 @@ git push origin master
 &emsp;&emsp;只有当用户有所克隆服务器的写入权限，并且之前没有人推送过时，这条命令才能生效。当和其他人在同一时
 间克隆，但他们先推送到上游然后用户再推送到上游时，用户的推送就会毫无疑问地被拒绝。用户必须先抓取他们的工作并将其合并进本地仓库后才能推送。
 
-## Branch
+## 分支
 
 &emsp;&emsp;分支是 Git 的核心概念，它和 commit 一样，都是很轻量化的概念。分支本质上仅仅是指向提交对象的可变指针。Git 的默认分支名字是 master，并且 master 分支会在每次提交时自动向前移动。
 
@@ -303,7 +301,7 @@ git push origin master
 
 &emsp;&emsp;在本地仓库中，始终存在一个 HEAD 指针，它说明当前所在的位置，HEAD 一般情况下都指向分支，此时 HEAD 相当于分支的别名。
 
-### branch
+### 创建分支
 
 &emsp;&emsp;branch 命令基于当前提交对象创建一个新分支：
 
@@ -315,7 +313,7 @@ git branch testing
 
 ![](04.png)
 
-### checkout
+### 切换分支
 
 &emsp;&emsp;checkout 另一个作用就是切换分支：
 
@@ -474,6 +472,4 @@ git stash pop
 ```
 
 &emsp;&emsp;pop 会取出最近一次贮藏记录，然后立即删除它。
-
------
 
