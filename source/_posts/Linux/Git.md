@@ -325,3 +325,155 @@ git checkout testing
 
 &emsp;&emsp;checkout 做两个工作：修改 HEAD 指针，以及更新工作区。由于切换分支会加载该分支关联的文件快照到工作目录中，所以要注意在切换分支前保存当前工作内容。
 
+### 分支合并
+
+&emsp;&emsp;由于分支非常轻量，所以一个项目中可能同时有很多分支，它们可能只关注一个很小的问题，当工作完成后，这个分支的使命就终了。接下来，主分支就可以使用 merge 命令合并它们的工作：
+
+```bash
+git checkout master
+git merge issue53
+```
+
+&emsp;&emsp;先切换到主分支，然后合并 issue 分支的内容。这将在主分支上创建一个新记录，这个新纪录有两个祖先：之前 master 的最新记录，以及 issue 的最新记录。
+
+&emsp;&emsp;因为 merge 涉及 3 个文件快照，所以它也叫三方合并：
+
+![](05.png)
+
+### 合并冲突
+
+&emsp;&emsp;合并两个分支时很可能遇到冲突，例如两个分支都对同一文件的相同部分作了修改，Git 无法确定要保留哪个，所以它将暂时终止合并，只有冲突被解决后，才能继续合并。
+
+&emsp;&emsp;冲突发生时，冲突所在文件会被修改以标识出冲突部分：
+
+```bash
+<<<<<<< HEAD:index.html
+<div id="footer">contact : email.support@github.com</div>
+=======
+<div id="footer">
+please contact us at support@github.com
+</div>
+>>>>>>> iss53:index.html
+```
+
+&emsp;&emsp;用户可以选择保留一个分支中的内容，也可以做额外修改，但最后必须删除`<<<<`，`====`以及`>>>>`。
+
+&emsp;&emsp;解决冲突文件后，需要使用 add 命令标识该文件的冲突已被解决，就和暂存它一样。
+
+&emsp;&emsp;最后，需要使用 commit 命令手动为这次发生冲突的合并提交记录，就和普通的 commit 一样。
+
+### 删除分支
+
+&emsp;&emsp;当一个分支已被其他分支合并后，就可以安全的删除它：
+
+```bash
+git branch -d issue53
+```
+
+&emsp;&emsp;但是，如果一个分支还没有被任何分支合并，-d 选项时无法删除它的，因为这将导致信息丢失。如果要强行删除它，可以使用：
+
+```bash
+git branch -D  notmerged
+```
+
+### 跟踪上游
+
+&emsp;&emsp;由于本地仓库和远程仓库时分隔的，一种联系本地分支和远程的方式就是让本地分支跟踪远程分支。
+
+1.   一个已有的分支
+
+&emsp;&emsp;可以使用 branch 的 -u 选项让一个本地分支跟踪远程分支：
+
+```bash
+git checkout master
+git branch -u origin/master
+```
+
+2.   直接从远程仓库创建分支
+
+&emsp;&emsp;从远程分支上直接创建一个本地分支也会自动跟踪它：
+
+```bash
+git checkout origin/master
+git checkout -b master
+```
+
+3.   其他方式
+
+&emsp;&emsp;还有很多其他方式：
+
+```bash
+git checkout -b sf origin/serverfix
+```
+
+-----
+
+&emsp;&emsp;当一个本地分支有了上游 (跟踪了远程分支)，那么它和远程仓库交互就会很方便。
+
+&emsp;&emsp;之前拉取远程分支并合并到本地需要两个操作 fetch 和 merge，但是现在可以直接使用 pull 命令，它会自动从当前分支的上游拉取信息，如果有更新，它会自动合并到本地：
+
+```bash
+git checkout master
+git pull
+```
+
+### 贮藏
+
+&emsp;&emsp;stash 命令以及其子命令用于完成贮藏工作。贮藏会将当前工作目录中的变动 (相对于上一次提交) 保存起来，并打包成一个镜像放入栈中。然后工作目录就被恢复成上一次提交时的样子。
+
+1.   创建贮藏
+
+```bash
+git stash
+git stash push
+```
+
+&emsp;&emsp;上面两条命令等价。但贮藏默认只会保存已跟踪文件，如果目录中有未跟踪文件，贮藏是不会保存的，必须使用 -u 或者 -a 选项：
+
+```bash
+git stash -u
+git stash -a
+```
+
+&emsp;&emsp;二者的区别在于：-u 只会保存未跟踪文件，但是 -a 还会保存 .gitignore 中忽略的文件。
+
+2.   查看贮藏
+
+&emsp;&emsp;使用 stash 的 list 子命令，可以查看分支上所有贮藏镜像：
+
+```bash
+git stash list
+```
+
+3.   删除贮藏
+
+&emsp;&emsp;使用 stash 的 drop 子命令，可以删除指定贮藏镜像：
+
+```bash
+git stash drop 2
+```
+
+4.   恢复贮藏
+
+&emsp;&emsp;使用 stash 的 apply 子命令，可以恢复指定贮藏到工作区 (不指定则为最近一次记录)：
+
+```bash
+git stash apply 2
+```
+
+&emsp;&emsp;注意：apply 默认不会恢复贮藏时的暂存状态，如果需要，使用 --index 选项：
+
+```bash
+git stash apply --index 2
+```
+
+&emsp;&emsp;一种常见的模式是恢复完后立即删除贮藏镜像 apply 和 drop，它们可以组合成一个操作 pop：
+
+```bash
+git stash pop
+```
+
+&emsp;&emsp;pop 会取出最近一次贮藏记录，然后立即删除它。
+
+-----
+
