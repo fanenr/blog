@@ -7,7 +7,7 @@ categories:
     - [Linux, Tool]
 ---
 
-&emsp;&emsp;总结 Learn Git Branching 和一些额外知识。
+&emsp;&emsp;一些必备且常用的 Git 知识。
 
 <!-- more -->
 
@@ -17,7 +17,7 @@ categories:
 
 ![](01.png)
 
-&emsp;&emsp;每当用户提交更新或保存项目状态时，Git 就会对当时的全部文件创建一个快照并保存这个快照的索引。为了效率，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。
+&emsp;&emsp;每当用户提交更新或保存项目状态时，Git 就会对当时的全部文件创建一个快照并保存这个快照的索引 (提交对象)。为了效率，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。
 
 ### 安装
 
@@ -118,7 +118,7 @@ git clone https://github.com/libgit2/libgit2 mydir
 git clone https://github.com/libgit2/libgit2 .
 ```
 
-&emsp;&emsp;&emsp;&emsp;Git 支持很多数据传输协议：https，git，ssh 等。
+&emsp;&emsp;Git 支持很多数据传输协议：https，git，ssh 等。
 
 ### 查看状态
 
@@ -288,8 +288,7 @@ git fetch origin
 git push origin master
 ```
 
-&emsp;&emsp;只有当用户有所克隆服务器的写入权限，并且之前没有人推送过时，这条命令才能生效。当和其他人在同一时
-间克隆，但他们先推送到上游然后用户再推送到上游时，用户的推送就会毫无疑问地被拒绝。用户必须先抓取他们的工作并将其合并进本地仓库后才能推送。
+&emsp;&emsp;只有当用户有所克隆服务器的写入权限，并且之前没有人推送过时，这条命令才能生效。当和其他人在同一时间克隆，但他们先推送到上游然后用户再推送到上游时，用户的推送就会毫无疑问地被拒绝。用户必须先抓取他们的工作并将其合并进本地仓库后才能推送。
 
 ## 分支
 
