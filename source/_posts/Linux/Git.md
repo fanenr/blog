@@ -334,6 +334,14 @@ git branch testing
 
 ![](04.png)
 
+&emsp;&emsp;另一种创建分支的方法是使用带 -b 选项的 checkout 命令：
+
+```bash
+git checkout -b testing
+```
+
+&emsp;&emsp;它包含两个操作：创建分支并自动切换到该分支上。
+
 ### 切换分支
 
 &emsp;&emsp;checkout 另一个作用就是切换分支：
@@ -343,6 +351,14 @@ git checkout testing
 ```
 
 &emsp;&emsp;checkout 做两个工作：修改 HEAD 指针，以及更新工作区。由于切换分支会加载该分支关联的文件快照到工作目录中，所以要注意在切换分支前保存当前工作内容。
+
+### 移动分支
+
+&emsp;&emsp;branch 的 -m 选项用来移动分支，经常用它来重命名一个分支：
+
+```bash
+git branch -m old new
+```
 
 ### 分支合并
 
