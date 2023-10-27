@@ -9,6 +9,7 @@ toc:
 &emsp;&emsp;以下是本站的友情链接：
 
 {% lg %}
+exiler's Blog | https://lgq007.github.io/ | Code builds world ! | https://lgq007.github.io/images/avatar.gif
 % Arthur's Blog | https://arthur63.top | just a blog | https://arthur63.top/images/avatar.png
 {% endlg %}
 
