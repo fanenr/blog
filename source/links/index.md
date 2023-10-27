@@ -10,7 +10,7 @@ toc:
 
 {% lg %}
 exiler's Blog | https://lgq007.github.io/ | Code builds world ! | https://lgq007.github.io/images/avatar.gif
-% Arthur's Blog | https://arthur63.top | just a blog | https://arthur63.top/images/avatar.png
+% Name | Url | Brief | Avatar
 {% endlg %}
 
 &emsp;&emsp;申请或互换友链请留言或发邮件，申请格式：
