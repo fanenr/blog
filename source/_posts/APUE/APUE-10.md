@@ -453,7 +453,7 @@ Sigfunc *signal(int signo, Sigfunc *func)
 }
 ```
 
-&emsp;&emsp;注意：必须用 sigemptyset 函数初始化 act 结构中的 sa_mask 成员。该实现中对除了 SIGALRM 外的信号都设置了 SA_RESTART 标志，希望内核自动重启被中断的系统调用。SUS 的 XSI 扩展规定，除非说明 SA_RESTART 标志，否则 sigaction 函数不再自动重启被中断的系统调用。有些系统定义了，SA_INTERRUPT 标志，其意义与 SA_RESTART 正好相反。
+&emsp;&emsp;注意：必须用 sigemptyset 函数初始化 act 结构中的 sa_mask 成员。该实现中对除了 SIGALRM 外的信号都设置了 SA_RESTART 标志，希望内核自动重启被中断的系统调用。SUS 的 XSI 扩展规定，除非说明 SA_RESTART 标志，否则 sigaction 函数不再自动重启被中断的系统调用。有些系统定义了 SA_INTERRUPT 标志，其意义与 SA_RESTART 正好相反。
 
 &emsp;&emsp;下面是另一个实现，它阻止系统自动重启被中断的系统调用：
 
