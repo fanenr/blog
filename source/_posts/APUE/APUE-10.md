@@ -477,4 +477,101 @@ Sigfunc *signal_intr(int signo, Sigfunc *func)
 
 ## 函数 sigsetjmp 和 siglongjmp
 
+&emsp;&emsp;当进程接收到某个信号，其信号处理程序开始执行时，此信号就被加入进程的信号屏蔽字中，这是为了防止信号处理程序被同一类信号再次中断。当信号处理程序返回时，内核会恢复之前的信号屏蔽字。如果在信号处理程序中调用 longjmp 直接回到主程序，则信号屏蔽字默认不会被自动恢复 (Linux)。
+
+&emsp;&emsp;虽然 Linux 通过选项支持了恢复行为，但更推荐在信号处理程序中使用 POSIX 定义的 sigsetjmp 和 siglongjmp 函数，它们有更清晰的语义：
+
+```c
+#include <setjmp.h>
+
+int sigsetjmp(sigjmp_buf env, int savemask);
+/* Returns: 0 if called directly, nonzero if returning from a call to siglongjmp */
+
+void siglongjmp(sigjmp_buf env, int val);
+```
+
+&emsp;&emsp;它们和非局部跳转的唯一区别是 sigsetjmp 多了 *savemask* 参数：如果 *savemask* 非 0，那么 sigsetjmp 会在 *env* 中保存当前的信号屏蔽字，此时，如果在信号处理程序中调用 siglongjmp 返回主程序，siglongjmp 就会恢复刚刚保存的信号屏蔽字。
+
+## 函数 sigsuspend
+
+&emsp;&emsp;早期信号的另一个问题是：如果希望解除进程对某个信号的阻塞，然后调用 pause 函数进入休眠，等待该信号再次递送。那么就需要两个独立的操作：
+
+```c
+sigprocmask(SIG_SETMASK, &new, &old);
+pause();
+```
+
+&emsp;&emsp;问题在于：如果信号只发生一次，且发生在调用 pause 之前，那么 pause 将导致进程陷入永久休眠。这是因为这两个操作的组合不是原子操作，存在被中断的可能。
+
+&emsp;&emsp;为了修正问题，一个原子操作函数 sigsuspend 被定义：
+
+```c
+#include <signal.h>
+
+int sigsuspend(const sigset_t *sigmask);
+
+/* Returns: −1 with errno set to EINTR */
+```
+
+&emsp;&emsp;参数 *sigmask* 是需要设置的新信号屏蔽字，调用 sigsuspend 后进程会陷入休眠，直到捕捉到一个信号或发生了一个会导致进程终止的信号。
+
+&emsp;&emsp;注意：如果进程捕捉到一个信号而且从该信号处理程序返回，则 sigsuspend 返回，并且该进程的信号屏蔽字会恢复到调用之前的值。并且，sigsuspend 总是返回 -1，设置 errno 为 EINTR。
+
+## 函数 abort
+
+&emsp;&emsp;abort 函数的作用是进程异常终止：
+
+```c
+#include <stdlib.h>
+
+void abort(void);
+
+/* This function never returns */
+```
+
+&emsp;&emsp;此函数将 SIGABRT 信号发送给调用进程 (进程不应忽略此信号)。ISO C 要求：若程序捕捉了此信号并且正常返回到主程序，abort 仍不会返回到其调用者。如果程序捕捉了它，则信号处理程序不能返回的唯一方法是它调用 exit, _exit, _Exit 或 longjmp, siglongjmp 函数。
+
+&emsp;&emsp;进程捕捉 SIGABRT 信号的意图应是：在进程终止前执行所需的清理动作。POSIX 规定：如果信号处理程序并不终止自己，则在信号处理程序返回时，abort 终止该进程。
+
+&emsp;&emsp;POSIX 说明：如果进程调用 abort 终止进程，则它对所有打开的标准 IO 流的效果应当与进程在终止前对每个流调用 fclose 的效果相同。
+
+&emsp;&emsp;一个按照 POSIX.1 说明对 abort 的实现：
+
+```c
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void abort(void) /* POSIX-style abort() function */
+{
+    sigset_t mask;
+    struct sigaction action;
+    /* Caller can’t ignore SIGABRT, if so reset to default */
+    sigaction(SIGABRT, NULL, &action);
+    if (action.sa_handler == SIG_IGN) {
+        action.sa_handler = SIG_DFL;
+        sigaction(SIGABRT, &action, NULL);
+    }
+    if (action.sa_handler == SIG_DFL)
+        fflush(NULL); /* flush all open stdio streams */
+
+    /* Caller can’t block SIGABRT; make sure it’s unblocked */
+    sigfillset(&mask);
+    sigdelset(&mask, SIGABRT); /* mask has only SIGABRT turned off */
+    sigprocmask(SIG_SETMASK, &mask, NULL);
+    kill(getpid(), SIGABRT);   /* send the signal */
+
+    /* If we’re here, process caught SIGABRT and returned */
+    fflush(NULL);                          /* flush all open stdio streams */
+    action.sa_handler = SIG_DFL;
+    sigaction(SIGABRT, &action, NULL);     /* reset to default */
+    sigprocmask(SIG_SETMASK, &mask, NULL); /* just in case ... */
+    kill(getpid(), SIGABRT);               /* and one more time */
+    exit(1); /* this should never be executed ... */
+}
+```
+
+## 函数 system
+
 &emsp;&emsp;
