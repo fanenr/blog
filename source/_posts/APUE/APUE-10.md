@@ -101,7 +101,7 @@ cc main.c &
 
 ## 不可靠的信号
 
-&emsp;&emsp;在早期的 UNIX 版本中 (如 V7)，信号是不可靠的 - 信号可能会丢失：一个信号发生了，但进程可能一直不知道。同时，进程对信号的控制能力也很差：进程只能捕捉信号或忽略它，但是不能阻塞信号。
+&emsp;&emsp;在早期的 UNIX 版本中 (如 V7)，信号是不可靠的 -- 信号可能会丢失：一个信号发生了，但进程可能一直不知道。同时，进程对信号的控制能力也很差：进程只能捕捉信号或忽略它，但是不能阻塞信号。
 
 &emsp;&emsp;早期版本中的一个问题是，进程每次收到一个信号并对其进行处理后，该信号随即就被重置为默认动作。程序不得不再次设置它：
 
@@ -194,11 +194,13 @@ again:
 
 ## 可靠信号术语和语义
 
-&emsp;&emsp;信号术语`产生` (generation)：当造成产生信号的事件发生时，内核会为进程产生一个信号。事件可以是硬件异常，软件条件，终端产生的信号或调用 kill 函数。当一个信号产生时，内核通常会在进程的进程表中设置一个某种形式的标志。
+&emsp;&emsp;信号术语`产生` (generation)：当导致信号产生的事件发生时，内核会为进程产生一个信号。事件可以是硬件异常，软件条件，终端产生的信号或调用 kill 函数。内核产生信号的主要动作是：在进程表的 pending 结构中设置一个与该信号关联的位。
 
-&emsp;&emsp;当内核设置信号对应标志时，可以说内核向进程`递送` (delivery) 了一个信号。在信号产生和递送之间的时间间隔内，信号处于`未决`状态 (pending)。
+&emsp;&emsp;当进程状态发生变化时 (由内核态变为用户态)，内核会结合 pending 和阻塞信号集 blocked 判断要向进程通知哪些信号 (pending & \~blocked)，通知动作即内核向进程`递送` (delivery) 了一个信号。在信号产生和递送之间的时间间隔内，信号处于`未决`状态 (pending)。
 
 &emsp;&emsp;进程可以选择阻塞信号递送。如果进程阻塞了某个信号，并且对该信号的动作是系统默认动作或捕捉，则内核会保持进程对该信号的未决状态。直到进程解除对此信号的阻塞，或者将此信号的动作设置为忽略。内核在递送一个被阻塞的信号给进程时 (而非信号产生时)，才决定对它的处理方式。
+
+&emsp;&emsp;注意，当产生信号的事件发生时，内核设置 pending 是无条件的。
 
 &emsp;&emsp;如果在进程解除对某个信号的阻塞之前，该信号产生了很多次，那么解除阻塞后，POSIX 允许系统递送该信号一次或多次。如果递送了多次，则称这些信号进行了排队。除非支持 POSIX 实时扩展，否则大多数 UNXI 并不对信号排队，而是只递送该信号一次。
 
@@ -277,3 +279,299 @@ int pause(void);
 ```
 
 &emsp;&emsp;只有进程执行了一个信号处理程序并从其返回时，pause 才返回。在这种情况下，pause 返回 -1，并且 errno 被设置为 EINTR。
+
+## 信号集
+
+&emsp;&emsp;不同的信号的编码可能超过一个整型量所包含的位数，因此不能使用整型量中的一位代表一种信号：即信号集不能使用一个整型来表示。为此，POSIX 定义了新数据类型 sigset_t 以包含一个信号集，并且定义了下面 5 种处理信号集的函数：
+
+```c
+#include <signal.h>
+
+int sigemptyset(sigset_t *set);
+int sigfillset(sigset_t *set);
+int sigaddset(sigset_t *set, int signo);
+int sigdelset(sigset_t *set, int signo);
+/* All four return: 0 if OK, −1 on error */
+
+int sigismember(const sigset_t *set, int signo);
+/* Returns: 1 if true, 0 if false, −1 on error */
+```
+
+&emsp;&emsp;函数 sigemptyset 初始化 *set* 指向的信号集，清除其中所有的信号。函数 sigfillset 初始化 *set* 指向的信号集，但是它使其包含所有的信号。在使用信号集之前，一定要调用二者之一来初始化。
+
+&emsp;&emsp;一旦已经初始化信号集，就可以在其中增，删特定的信号。函数 sigaddset 将一个信号加入信号集中，函数 sigdelset 从一个信号集中删除某个信号。函数 sigmember 用来测试一个信号集是否包含某个特定的信号。
+
+## 函数 sigprocmask
+
+&emsp;&emsp;调用 sigprocmask 函数可以检测或修改进程的信号屏蔽字：
+
+```c
+#include <signal.h>
+
+int sigprocmask(int how, const sigset_t *restrict set, sigset_t *restrict oset);
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;如果 *oset* 是非空指针，那么其将保存进程当前的信号屏蔽字。
+
+&emsp;&emsp;如果 *set* 是非空指针，则函数根据 *how* 的值来决定如何修改进程信号屏蔽字：
+
+![](05.png)
+
+&emsp;&emsp;如果 *set* 是空指针，则 *how* 值就无意义。在调用 sigprocmask 后如果有任何未决的，不再阻塞的信号，则在 sigprocmask 返回之前至少将其中之一递送给进程。
+
+## 函数 sigpending
+
+&emsp;&emsp;sigpending 函数可以获取进程中当前处于未决状态的信号集：
+
+```c
+#include <signal.h>
+
+int sigpending(sigset_t *set);
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;具体来说，sigpending 会返回进程表中的 pending 集合。
+
+## 函数 sigaction
+
+&emsp;&emsp;sigaction 函数的功能是检查或修改与指定信号关联的处理动作，它可以取代 signal 函数：
+
+```c
+#include <signal.h>
+
+int sigaction(int signo, const struct sigaction *restrict act,
+              struct sigaction *restrict oact);
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;其中，*signo* 是要处理的信号编号。若 *act* 是非空指针，则执行修改动作。若 *oact* 是非空指针，则函数会在其指定位置存储该信号之前的动作。
+
+```c
+struct sigaction
+{
+    void (*sa_handler)(int); /* addr of signal handler, */
+                             /* or SIG_IGN, or SIG_DFL */
+    sigset_t sa_mask;        /* additional signals to block */
+    int sa_flags;            /* signal options, Figure 10.16 */
+    void (*sa_sigaction)(int, siginfo_t *, void *); /* alternate handler */
+};
+```
+
+&emsp;&emsp;当更改信号动作时，字段 sa_handler 包含信号的处理函数地址。如果其指向一个用户自定义函数 (不是 SIG_IGN 和 SIG_DFL)，则内核在调用该捕捉函数前会将 sa_mask 信号集加入信号屏蔽字中，并在信号处理程序返回时恢复原来的信号屏蔽字。这样，在调用信号处理程序时就能阻塞某些信号。
+
+&emsp;&emsp;在信号处理程序被调用时，内核会也会将当前信号临时加入屏蔽字中。如果在其调用期间，信号产生了多次，那么结束调用时内核才会解除阻塞，并且通常也只递送一次。
+
+&emsp;&emsp;*act* 结构中的 sa_flags 字段指定对信号处理的各个选项：
+
+![](06.png)
+
+&emsp;&emsp;若使用了上面的 SA_SIGINFO 标志，内核会在递送信号时调用函数 sa_sigaction 而不是 sa_handler，前者可以获取更多信息：
+
+```c
+void handler(int signo, siginfo_t *info, void *context);
+```
+
+&emsp;&emsp;siginfo_t 结构包含了与信号产生原因的有关信息，POSIX 要求该结构至少包含 si_signo 和 si_code 成员，符合 XSI 的实现至少包含以下字段：
+
+```c
+struct siginfo
+{
+    int si_signo;          /* signal number */
+    int si_errno;          /* if nonzero, errno value from errno.h */
+    int si_code;           /* additional info (depends on signal) */
+    pid_t si_pid;          /* sending process ID */
+    uid_t si_uid;          /* sending process real user ID */
+    void *si_addr;         /* address that caused the fault */
+    int si_status;         /* exit value or signal number */
+    union sigval si_value; /* application-specific value */
+    /* possibly other fields also */
+};
+
+union sigval si_value {
+    int sigval_int;
+    void *sigval_ptr;
+};
+```
+
+&emsp;&emsp;应用程序在递送信号时，可以在 si_value.sigval_int 中传递一个整型或在 si_value.sigval_ptr 中传递一个通用指针值。
+
+&emsp;&emsp;当递送某些信号时，si_code 会包含信号发生的原因：
+
+![](07.png)
+
+&emsp;&emsp;若信号是 SIGCHLD，则设置 si_pid, si_status 和 si_uid 字段。若信号是 SIGBUS, SIGILL, SIGFPE 或 SIGSEGV，则 si_addr 包含造成故障的根源地址，si_errno 包含错误编码。
+
+&emsp;&emsp;信号处理程序的 *context* 参数是通用指针，它可被强转为 ucontext_t 结构类型，该结构标识信号传递时进程的上下文，该结构至少包含以下字段：
+
+```c
+ucontext_t *uc_link;    /* pointer to context resumed when */
+                        /* this context returns */
+sigset_t uc_sigmask;    /* signals blocked when this context */
+                        /* is active */
+stack_t uc_stack;       /* stack used by this context */
+mcontext_t uc_mcontext; /* machine-specific representation of */
+                        /* saved context */
+```
+
+&emsp;&emsp;uc_stack 字段描述了当前上下文使用的栈，至少包含以下成员：
+
+```c
+void *ss_sp;    /* stack base or pointer */
+size_t ss_size; /* stack size */
+int ss_flags;   /* flags */
+```
+
+-----
+
+&emsp;&emsp;很多平台都使用 sigaction 函数实现 signal：
+
+```c
+#include "apue.h"
+
+/* Reliable version of signal(), using POSIX sigaction(). */
+Sigfunc *signal(int signo, Sigfunc *func)
+{
+    struct sigaction act, oact;
+
+    act.sa_handler = func;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+    if (signo == SIGALRM) {
+#ifdef SA_INTERRUPT
+        act.sa_flags |= SA_INTERRUPT;
+#endif
+    } else {
+        act.sa_flags |= SA_RESTART;
+    }
+    if (sigaction(signo, &act, &oact) < 0)
+        return (SIG_ERR);
+    return (oact.sa_handler);
+}
+```
+
+&emsp;&emsp;注意：必须用 sigemptyset 函数初始化 act 结构中的 sa_mask 成员。该实现中对除了 SIGALRM 外的信号都设置了 SA_RESTART 标志，希望内核自动重启被中断的系统调用。SUS 的 XSI 扩展规定，除非说明 SA_RESTART 标志，否则 sigaction 函数不再自动重启被中断的系统调用。有些系统定义了 SA_INTERRUPT 标志，其意义与 SA_RESTART 正好相反。
+
+&emsp;&emsp;下面是另一个实现，它阻止系统自动重启被中断的系统调用：
+
+```c
+#include "apue.h"
+
+Sigfunc *signal_intr(int signo, Sigfunc *func)
+{
+    struct sigaction act, oact;
+    act.sa_handler = func;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+#ifdef SA_INTERRUPT
+    act.sa_flags |= SA_INTERRUPT;
+#endif
+    if (sigaction(signo, &act, &oact) < 0)
+        return (SIG_ERR);
+    return (oact.sa_handler);
+}
+```
+
+## 函数 sigsetjmp 和 siglongjmp
+
+&emsp;&emsp;当进程接收到某个信号，其信号处理程序开始执行时，此信号就被加入进程的信号屏蔽字中，这是为了防止信号处理程序被同一类信号再次中断。当信号处理程序返回时，内核会恢复之前的信号屏蔽字。如果在信号处理程序中调用 longjmp 直接回到主程序，则信号屏蔽字默认不会被自动恢复 (Linux)。
+
+&emsp;&emsp;虽然 Linux 通过选项支持了恢复行为，但更推荐在信号处理程序中使用 POSIX 定义的 sigsetjmp 和 siglongjmp 函数，它们有更清晰的语义：
+
+```c
+#include <setjmp.h>
+
+int sigsetjmp(sigjmp_buf env, int savemask);
+/* Returns: 0 if called directly, nonzero if returning from a call to siglongjmp */
+
+void siglongjmp(sigjmp_buf env, int val);
+```
+
+&emsp;&emsp;它们和非局部跳转的唯一区别是 sigsetjmp 多了 *savemask* 参数：如果 *savemask* 非 0，那么 sigsetjmp 会在 *env* 中保存当前的信号屏蔽字，此时，如果在信号处理程序中调用 siglongjmp 返回主程序，siglongjmp 就会恢复刚刚保存的信号屏蔽字。
+
+## 函数 sigsuspend
+
+&emsp;&emsp;早期信号的另一个问题是：如果希望解除进程对某个信号的阻塞，然后调用 pause 函数进入休眠，等待该信号再次递送。那么就需要两个独立的操作：
+
+```c
+sigprocmask(SIG_SETMASK, &new, &old);
+pause();
+```
+
+&emsp;&emsp;问题在于：如果信号只发生一次，且发生在调用 pause 之前，那么 pause 将导致进程陷入永久休眠。这是因为这两个操作的组合不是原子操作，存在被中断的可能。
+
+&emsp;&emsp;为了修正问题，一个原子操作函数 sigsuspend 被定义：
+
+```c
+#include <signal.h>
+
+int sigsuspend(const sigset_t *sigmask);
+
+/* Returns: −1 with errno set to EINTR */
+```
+
+&emsp;&emsp;参数 *sigmask* 是需要设置的新信号屏蔽字，调用 sigsuspend 后进程会陷入休眠，直到捕捉到一个信号或发生了一个会导致进程终止的信号。
+
+&emsp;&emsp;注意：如果进程捕捉到一个信号而且从该信号处理程序返回，则 sigsuspend 返回，并且该进程的信号屏蔽字会恢复到调用之前的值。并且，sigsuspend 总是返回 -1，设置 errno 为 EINTR。
+
+## 函数 abort
+
+&emsp;&emsp;abort 函数的作用是进程异常终止：
+
+```c
+#include <stdlib.h>
+
+void abort(void);
+
+/* This function never returns */
+```
+
+&emsp;&emsp;此函数将 SIGABRT 信号发送给调用进程 (进程不应忽略此信号)。ISO C 要求：若程序捕捉了此信号并且正常返回到主程序，abort 仍不会返回到其调用者。如果程序捕捉了它，则信号处理程序不能返回的唯一方法是它调用 exit, _exit, _Exit 或 longjmp, siglongjmp 函数。
+
+&emsp;&emsp;进程捕捉 SIGABRT 信号的意图应是：在进程终止前执行所需的清理动作。POSIX 规定：如果信号处理程序并不终止自己，则在信号处理程序返回时，abort 终止该进程。
+
+&emsp;&emsp;POSIX 说明：如果进程调用 abort 终止进程，则它对所有打开的标准 IO 流的效果应当与进程在终止前对每个流调用 fclose 的效果相同。
+
+&emsp;&emsp;一个按照 POSIX.1 说明对 abort 的实现：
+
+```c
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void abort(void) /* POSIX-style abort() function */
+{
+    sigset_t mask;
+    struct sigaction action;
+    /* Caller can’t ignore SIGABRT, if so reset to default */
+    sigaction(SIGABRT, NULL, &action);
+    if (action.sa_handler == SIG_IGN) {
+        action.sa_handler = SIG_DFL;
+        sigaction(SIGABRT, &action, NULL);
+    }
+    if (action.sa_handler == SIG_DFL)
+        fflush(NULL); /* flush all open stdio streams */
+
+    /* Caller can’t block SIGABRT; make sure it’s unblocked */
+    sigfillset(&mask);
+    sigdelset(&mask, SIGABRT); /* mask has only SIGABRT turned off */
+    sigprocmask(SIG_SETMASK, &mask, NULL);
+    kill(getpid(), SIGABRT);   /* send the signal */
+
+    /* If we’re here, process caught SIGABRT and returned */
+    fflush(NULL);                          /* flush all open stdio streams */
+    action.sa_handler = SIG_DFL;
+    sigaction(SIGABRT, &action, NULL);     /* reset to default */
+    sigprocmask(SIG_SETMASK, &mask, NULL); /* just in case ... */
+    kill(getpid(), SIGABRT);               /* and one more time */
+    exit(1); /* this should never be executed ... */
+}
+```
+
+## 函数 system
+
+&emsp;&emsp;
