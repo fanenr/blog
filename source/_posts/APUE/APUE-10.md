@@ -574,4 +574,138 @@ void abort(void) /* POSIX-style abort() function */
 
 ## 函数 system
 
-&emsp;&emsp;
+&emsp;&emsp;POSIX 要求 system 函数在执行时应为调用者忽略 SIGINT 和 SIGQUIT，阻塞 SIGCHLD 信号。原因是：system 函数会创建子进程用于执行 shell 程序。
+
+&emsp;&emsp;如果不阻塞 SIGCHLD 信号，当其子进程终止时，程序就会接收到信号，若程序调用 wait 接收了进程的终止状态，那么 system 将无法获取该终止进程的返回状态了。
+
+![](08.png)
+
+&emsp;&emsp;如果不忽略 SIGINT 和 SIGQUIT 信号，那么当用户在终端键入中断字符时，前台进程组的进程：应用程序和 system 创建的子进程都会收到信号。若用户键入中断字符，则应将信号发送给 system 创建的子进程。
+
+-----
+
+&emsp;&emsp;注意 system 函数的返回值：
+
+-   只有当 shell 本身异常终止时，函数返回值才报告一个异常终止。
+-   对于 sh 及 bash 来说，如果向正在执行的命令发送一个信号，则其终止状态是 128 加上一个信号编号，这是因为该信号导致了进程被终止。
+
+## 函数 sleep，nanosleep 和 clock_nanosleep
+
+&emsp;&emsp;调用 sleep 函数可使进程进入休眠：
+
+```c
+#include <unistd.h>
+
+unsigned int sleep(unsigned int seconds);
+
+/* Returns: 0 or number of unslept seconds */
+```
+
+&emsp;&emsp;调用进程被唤醒，直到满足以下两个条件之一：
+
+-   已经过了 *seconds* 所指定的墙上时钟时间。
+-   调用进程捕捉到一个信号并从信号处理程序返回。
+
+&emsp;&emsp;如同 alarm 函数，由于其他系统活动，实际返回时间会比要求的迟一些。在第一种情形中，sleep 的返回值是 0。若进程由于信号被提前唤醒，则 sleep 返回未休眠完的秒数。
+
+&emsp;&emsp;nanosleep 函数与 sleep 类似，但提供了纳秒级的精度：
+
+```c
+#include <time.h>
+
+int nanosleep(const struct timespec *reqtp, struct timespec *remtp);
+
+/* Returns: 0 if slept for requested time or −1 on error */
+```
+
+&emsp;&emsp;nanosleep 函数语义与 sleep 类似，参数 *reqtp* 用秒和纳秒指定了进程要休眠的时间，如果进程因为信号被提前唤醒，则 *remtp* 会保存未休眠完的时间。
+
+&emsp;&emsp;如果系统不支持纳秒精度，要求的时间就会取整。因为 nanosleep 不涉及产生任何信号，所以无需担心与其他函数的交互问题。
+
+&emsp;&emsp;随着多个时钟的引入，需要使用相对于特定时钟的延迟时间来挂起调用线程：
+
+```c
+#include <time.h>
+
+int clock_nanosleep(clockid_t clock_id, int flags,
+                    const struct timespec *reqtp, struct timespec *remtp);
+
+/* Returns: 0 if slept for requested time or error number on failure */
+```
+
+&emsp;&emsp;参数 *clock_id* 指定了计算延迟时间基于的时钟。参数 *flags* 用于控制延迟是相对的还是绝对的，常量 CLOCK_REALTIME 表示相对，TIMER_ABSTIME 表示绝对：休眠将持续到某个特定的时间点。
+
+&emsp;&emsp;除了出错返回，以下两种调用等价：
+
+```c
+clock_nanosleep(CLOCK_REALTIME, 0, reqtp, remtp);
+nanosleep(reqtp, remtp);
+```
+
+## 函数 sigqueue
+
+&emsp;&emsp;大多数 UNIX 系统不对信号排队，在 POSIX 实时扩展中，有些系统开始增加对信号排队的支持。
+
+&emsp;&emsp;通常一个信号带有一个位信息：信号本身。除了对信号排队以外，这些扩展允许应用程序在递交信号时传递更多的信息，如整数或一个缓冲区地址，这些信息被嵌入在 siginfo 结构中。
+
+&emsp;&emsp;使用排队信号必须使用以下几个操作：
+
+1.   使用 sigaction 函数设置信号处理程序时指定 SA_SIGINFO 标志，如果不指定，信号会延迟，但信号是否进入队列取决于具体实现。
+2.   使用 sigaction 结构的 sa_sigaction 成员设置信号处理程序，而不是 sa_handler。实现可能允许使用 sa_handler，但是它无法获取额外信息。
+3.   使用 sigqueue 函数发送信号：
+
+```c
+#include <signal.h>
+
+int sigqueue(pid_t pid, int signo, const union sigval value)
+
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;sigqueue 只能将信号发送给单个进程，可以使用 *value* 向信号处理程序传递额外信息。
+
+&emsp;&emsp;信号不能被无限排队，当到达限制 SIGQUEUE_MAX 时，sigqueue 就会失败。
+
+&emsp;&emsp;随着实时信号的增强，引入了用于应用程序的独立信号集，这些信号编号位于 [SIGRTMIN, SIGRTMAX]，它们的默认行为都是终止进程。
+
+![](09.png)
+
+## 信号名和编号
+
+&emsp;&emsp;某些系统提供数组：
+
+```c
+extern char *sys_siglist[];
+```
+
+&emsp;&emsp;数组下标是信号编号，数组元素是指向信号名的字符串。
+
+&emsp;&emsp;可以使用 psignal 函数可移植的打印与信号编号对应的字符串：
+
+```c
+#include <signal.h>
+
+void psignal(int signo, const char *msg);
+```
+
+&emsp;&emsp;该函数将信号说明输出到标准错误文件中，并且风格类似 perror，允许传递一个标识符 *msg*，如果 *msg* 不是空指针，则会输出形似 msg: description 的信息。
+
+&emsp;&emsp;另一个函数 psiginfo 可以解释 siginfo 结构：
+
+```c
+#include <signal.h>
+
+void psiginfo(const siginfo_t *info, const char *msg);
+```
+
+&emsp;&emsp;另一个函数 strsignal：
+
+``` c
+#include <string.h>
+
+char *strsignal(int signo);
+
+/* Returns: a pointer to a string describing the signal */
+```
+
+&emsp;&emsp;它类似 strerror，只会返回信号描述的字符串，不会写入信息到标准错误中。
