@@ -8,7 +8,7 @@ categories:
     - [Build, Make]
 ---
 
-&emsp;&emsp;学习一下 GNU Make 的语法 Makefile。
+&emsp;&emsp;学习一下 GNU Make。
 
 <!-- more -->
 
@@ -39,7 +39,7 @@ target ... : prerequisites ...
 
 &emsp;&emsp;recipe 是该 target 要执行的命令。
 
-&emsp;&emsp;这是一个文件的依赖关系：target 这一个或多个目标依赖于 prerequistes 中的文件或目标，其生成规则定义在 command 中。如果 prerequistes 中有一个以上的文件比 target 文件要新，recipe 所定义的命令就会被执行。
+&emsp;&emsp;规则说明了一些文件之间的依赖关系：target 这一个或多个目标依赖于 prerequistes 中的文件或目标，command 即生成目标所需的志玲。如果 prerequistes 中有一个以上的文件比 target 文件要新或 target 不存在，则 recipe 所定义的命令就会被执行。
 
 ## 流程
 
@@ -80,19 +80,18 @@ clean :
 		insert.o search.o files.o utils.o
 ```
 
-&emsp;&emsp;在默认的方式下，只输入 make 命令，那么
+&emsp;&emsp;在默认的方式下，只输入 make 命令，那么：
 
-1.   make 会在当前目录下寻找名为 Makefile 或 Makefile 的文件。
-2.   如果找到，它会把文件中第一个目标 edit 作为最终目标。
+1.   make 会在当前目录下寻找名为 Makefile 或 makefile 的文件。如果找到，它会把文件中第一个目标 edit 作为最终目标。
 3.   如果最终目标 edit 不存在，或是 edit 所依赖的文件修改时间比 edit 要新，那么它就会执行后面的命令来生成 edit。
-4.   如果 edit 所依赖的文件 (object file) 也不存在，那么 make 就会在当前文件中寻找目标为该文件的依赖性，然后则根据该规则来生成缺失的依赖文件。
+4.   如果 edit 所依赖的文件 (object file) 也不存在，那么 make 就会在当前文件中寻找目标为该文件的规则，然后则根据该规则来生成缺失的依赖文件 (这是一个递归过程)。
 5.   因为 C 文件和头文件总是存在的，所以 make 会先生成中间文件，然后用中间文件生成 edit 文件。
 
-&emsp;&emsp;像 clena 这种没有被第一个目标直接或间接关联的目标，它后面所指定的命令将不会被自动执行。但是，可以通过显示的要求，让 make 生成某个目标：make clean。
+&emsp;&emsp;像 clean 这种没有被第一个目标直接或间接关联的目标，它后面所指定的命令将不会被自动执行。但是，可以通过显式的要求让 make 生成某个目标：make clean。
 
 ## 内容
 
-&emsp;&emsp;&emsp;&emsp;Makefile 中主要包含 5 个东西：显式规则，隐式规则，变量定义，指令和注释。
+&emsp;&emsp;Makefile 中主要包含 5 部分：显式规则，隐式规则，变量定义，指令和注释。
 
 -   显式规则
 
@@ -100,7 +99,7 @@ clean :
 
 -   隐式规则
 
-&emsp;&emsp;由于 GNU make 有自动推导功能，所以隐式规则允许简略的书写 Makefile。
+&emsp;&emsp;由于 GNU make 有自动推导功能，所以隐式规则允许书写简略的 Makefile。
 
 -   变量定义
 
@@ -108,17 +107,19 @@ clean :
 
 -   指令
 
-&emsp;&emsp;指令包含 3 部分：其一是在一个 Makefile 中引用另一个 Makefile，像 C 中的 include。另一个是根据条件指定 Makefile 中的有效部分，像 C 中的 #if。还有一个是定义一个多行的命令。
+&emsp;&emsp;指令包含 3 部分：其一是在一个 Makefile 中引用另一个 Makefile，像 C 中的 include。另一个是根据条件指定 Makefile 中的有效部分，像 C 中的 #if。最后是可以定义一个多行的命令。
 
 -   注释
 
-&emsp;&emsp;Makefile 中只有行注释，和 UNIX 中的 shell 脚本一样使用 # 字符。如果要使用该字符，应该转义`\#`。
+&emsp;&emsp;Makefile 中只有行注释，使用 # 字符。如果要使用该字符，应该转义`\#`。
 
 ## 书写规则
 
 &emsp;&emsp;规则包含两个部分：依赖关系和生成目标的方法。
 
-&emsp;&emsp;Makefile 中，规则顺序很重要，因为 Makefile 中只应该有一个最终目标，其它目标都被这个目标连带出来。所以一定要让 make 知道最终目标是什么。一般来说，定义在 Makefile 中的目标可能会有很多，但是第一条规则中的目标将被确立为最终的目标。如果第一条规则中的目标有很多个，那么，第一个目标会成为最终的目标，make 所完成的也就是这个目标。
+&emsp;&emsp;在 Makefile 中，规则的定义顺序很重要。因为 Makefile 中只应该有一个最终目标，其它目标都是生成最终目标的中间过程。所以，一定要让 make 知道最终目标是什么。
+
+&emsp;&emsp;一般来说，定义在 Makefile 中的目标可能会有很多，但第一条规则中的目标将被确立为最终的目标。如果第一条规则中的目标有很多个，那么，第一个目标会成为最终的目标，make 所完成的也就是这个目标。
 
 ### 规则语法
 
@@ -136,10 +137,92 @@ targets : prerequisites ; command
 	...
 ```
 
-&emsp;&emsp;targets 是文件名，以空格分开，可以使用通配符。
-
-&emsp;&emsp;command 是命令行命令，如果不与 targets 在同一行，必须以 Tab 键开头。如果要与 targets 在同一行，那么以符号 ; 分隔，即第二种写法。
+&emsp;&emsp;targets 是文件名，以空格分开。command 是命令行命令，如果不与 targets 在同一行，必须以 Tab 键开头。如果要与 targets 在同一行，那么以符号 ; 分隔。
 
 &emsp;&emsp;prerequistes 是目标所依赖的文件或目标，如果其中某个依赖文件比目标文件要新 (修改时间)，那么目标就是`过时`的，被确认为要被重新生成。
 
-&emsp;&emsp;生成一个目标的命令可以有多个，即可以列多行 command。如果命令太长，可以使用 \ 作为换行符。
+&emsp;&emsp;生成一个目标的命令可以有多个，即可以有多行 command。如果命令太长，可以使用 \ 作为换行符。
+
+### 通配符
+
+&emsp;&emsp;在 Makefile 中可以使用通配符：\~，\*，?，它们的含义和在 sh 中一致。
+
+&emsp;&emsp;规则中的 target 和 prerequisties 可以包含通配符：
+
+```makefile
+app: *.c
+	gcc -o app $^
+```
+
+### 伪目标
+
+&emsp;&emsp;如果一个目标不关联实际文件，则该目标就是伪目标。
+
+```makefile
+.PHONY: clean
+clean:
+	rm -f *.o
+```
+
+&emsp;&emsp;目标 clean 并不关联一个文件，所以它是一个伪目标。注意：伪目标的取名不能和文件重名，否则就变成了一个正常的文件间依赖规则。可以使用`.PHONY`向 make 指明哪些目标是伪目标，一旦指明某个目标是伪目标，那么 make 将忽略可能存在重名文件。
+
+&emsp;&emsp;伪目标可以有依赖文件，也可以被其他目标依赖。
+
+### 多目标
+
+&emsp;&emsp;GNU make 支持多目标，这能省略很多重复工作：
+
+```makefile
+app1 app2: common.h
+```
+
+&emsp;&emsp;现在两个目标 app1 和 app2 都依赖文件 common.h，其等价于：
+
+```makefile
+app1: common.h
+app2: common.h
+```
+
+&emsp;&emsp;如果规则中包含多目标和命令，则命令的书写有些不同：此时要在一条规则中书写生成每个目标的通用命令，所以要使用一些`自动化变量`：
+
+```makefile
+all: a b
+
+a b: common.c 
+	gcc -o $@ $(addsuffix .c,$@) common.c
+```
+
+&emsp;&emsp;这里的 $@ 代表目标集合中的目标，类似使用 foreach 展开时的中间变量。
+
+### 静态模式
+
+&emsp;&emsp;静态模式是多目标的强化，其语法是：
+
+```makefile
+<targets ...> : <target-pattern> : <prereq-patterns ...>
+	<commands>
+	...
+```
+
+&emsp;&emsp;其中 \<target-pattern> 描述目标集合满足的公共特征，可以使用 % 通配符。\<prereq-patters> 是对目标集合的重定义，它基于目标集合描述了依赖集合的特征，也可以使用 % 通配符。
+
+```makefile
+objects = foo.o bar.o
+
+all: $(objects)
+
+$(objects): %.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+```
+
+&emsp;&emsp;除了自动化变量 \$@，这里使用的 \$< 也是一个自动化变量，它代表依赖集合中的第一个文件。上面的静态模式展开后效果类似：
+
+```makefile
+foo.o: foo.c
+	$(CC) -c $(CFLAGS) foo.c -o foo.o
+bar.o: bar.c
+	$(CC) -c $(CFLAGS) bar.c -o bar.o
+```
+
+&emsp;&emsp;静态模式是基于模式匹配的，所以这里的 foo 只依赖 foo.c 而不包含 bar.c。此外，依赖模式可以有多个，但是 $< 只能取第一个依赖文件。
+
