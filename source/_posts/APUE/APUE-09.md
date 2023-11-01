@@ -12,13 +12,13 @@ categories:
 
 <!-- more -->
 
-## 终端登录
+## TODO 终端登录
 
 &emsp;&emsp;太复杂了，暂时没看。
 
-## 网络登录
+## TODO 网络登录
 
-&emsp;&emsp;同上。
+&emsp;&emsp;太复杂了，暂时没看。
 
 ## 进程组
 
@@ -109,9 +109,9 @@ pid_t getsid(pid_t pid);
 
 &emsp;&emsp;会话和进程组还有一些其他特性：
 
--   一个会话可以由一个`控制终端` (control terminal)。通常是终端设备 (终端登录的情况) 或者 伪终端设备 (网络登录的情况)。
+-   一个会话可以有一个`控制终端` (control terminal)。通常是终端设备 (终端登录的情况) 或伪终端设备 (网络登录的情况)。
 -   建立与控制终端连接的会话首进程被称为`控制进程` (control process)。
--   一个会话中的几个进程组可被分成一个`前台进程组` (foreground process group) 以及一个或多个`后台进程组`  (background process group)。
+-   一个会话中的进程组可被分成一个`前台进程组` (foreground process group) 以及一个或多个`后台进程组`  (background process group)。
 -   如果一个会话有一个控制终端，则它有一个前台进程组，其他进程组为后台进程组。
 -   无论何时键入终端的中断或退出键，都会将中断或退出信号发送给前台进程组中的所有进程。
 -   如果终端接口检测到调制解调器 (或网络) 断开连接，则将挂断信号发送至控制进程。
@@ -124,4 +124,92 @@ pid_t getsid(pid_t pid);
 
 ## 函数 tcgetpgrp, tcsetpgrp 和 tcgetsid
 
-&emsp;&emsp;
+&emsp;&emsp;需要一种方法来通知内核哪一个进程组是前台进程组，这样，终端设备驱动程序就能直到将终端输入和终端产生的信号发送到何处：
+
+```c
+#include <unistd.h>
+
+pid_t tcgetpgrp(int fd);
+/* Returns: process group ID of foreground process group if OK, −1 on error */
+
+int tcsetpgrp(int fd, pid_t pgrpid);
+/* Returns: 0 if OK, −1 on error */
+```
+
+&emsp;&emsp;函数 tcgetpgrp 返回与 *fd* 终端设备关联的前台进程组 ID。
+
+&emsp;&emsp;如果进程有一个控制终端，则该进程可以调用 tcsetpgrp 将前台进程组 ID 设置为 *pgrpid*。并且 *pgrpid* 应当是同一会话中的某个进程组 ID，*fd* 必须是该会话的控制终端。
+
+&emsp;&emsp;大多数应用程序并不直接调用这两个函数，它们通常由作业控制 shell 调用。
+
+&emsp;&emsp;函数 tcgetsid 可以获取会话 ID：
+
+```c
+#include <termios.h>
+
+pid_t tcgetsid(int fd);
+
+/* Returns: session leader’s process group ID if OK, −1 on error */
+```
+
+&emsp;&emsp;给出控制 TTY 的文件描述符，它返回该终端设备所关联的会话 ID (控制进程的 PID/GID)。
+
+## 作业控制
+
+&emsp;&emsp;作业控制是 BSD 引入的一个特性，它允许在一个终端上启动多个作业 (进程组)，它控制哪一个作业可以访问终端以及哪些作业在后台运行。使用作业控制有下列要求：
+
+1.   支持作业控制的 shell。
+2.   内核中的终端驱动程序必须支持作业控制。
+3.   内核必须提供对某些作业控制信号的支持。
+
+&emsp;&emsp;从 shell 使用作业控制功能的角度观察，用户可以在前台或后台启动作业。一个作业只是几个进程的集合，通常是一个进程管道：
+
+```bash
+vi main.c
+pr *.c | lpr &
+make all &
+```
+
+&emsp;&emsp;当启动一个后台作业时，shell 赋予它一个作业标识符，并在前台打印一个或多个进程 ID：
+
+```bash
+$ make all > Make.out &
+[1]  1475
+$ pr *.c | lpr &
+[2]  1490
+$ # input enter
+[2] + Done  pr *.c | lpr &
+[1] + Done  make all > Make.out &
+```
+
+&emsp;&emsp;make 的作业编号是 1，启动的进程 ID 是 1475。第二个管道的作业编号是 2，其第一个进程是 1490。当作业完成且键入回车时，shell 会打印作业完成状态。
+
+&emsp;&emsp;用户可以键入 3 个特殊字符使终端驱动程序产生信号，它们会被发送给前台进程组：
+
+1.   中断字符 (Ctrl + C) 产生 SIGINT。
+2.   退出字符 (Ctrl + \\) 产生 SIGQUIT。
+3.   挂起字符 (Ctrl + Z) 产生 SIGTSTP。
+
+&emsp;&emsp;用户可以有一个前台作业和多个后台作业，通常只有前台作业接收终端输入。如果后台作业试图读终端，这不是一个错误，但终端驱动程序将检测这种情况，并向该后台作业发送一个特定信号 SIGTTIN。该信号通常会停止 (挂起) 此后台作业，而 shell 也会检测这种情况并通知用户。用户可以用 shell 命令将此作业转换为前台作业运行，然后它就可以正常的读终端了。
+
+&emsp;&emsp;默认是允许后台作业写终端的，但用户可以禁止这一行为：
+
+```bash
+stty tostop
+```
+
+&emsp;&emsp;若用户禁止了后台作业写终端，则当该作业试图写终端时，终端驱动程序会检测到这一行为，并向该作业发送 SIGTTOU 信号，然后该作业会阻塞。读终端一样，用户可以将作业转换为前台作业继续运行。
+
+![](03.png)
+
+## TODO shell 执行程序
+
+&emsp;&emsp;暂时用不上。
+
+## TODO 孤儿进程组
+
+&emsp;&emsp;暂时用不上。
+
+## TODO FreeBSD 实现
+
+&emsp;&emsp;暂时用不上。
