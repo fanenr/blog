@@ -3,10 +3,10 @@ title: Hexo Config
 date: 2023-06-22 19:48:33
 updated: 2023-06-23 19:00:00
 tags:
-    - Hexo
-    - Blog
+  - Hexo
+  - Blog
 categories:
-    - Hexo
+  - Hexo
 ---
 
 &emsp;&emsp;该说不说的，Hexo 配置还真是多，之前用语雀就是无脑写。
@@ -70,14 +70,14 @@ search:
 
 #### 安装
 
-1.   先卸载`hexo-renderer-marked`插件
+1. 先卸载`hexo-renderer-marked`插件
 
 ```bash
 # cd Hexo-Blog
 npm uninstall hexo-renderer-marked --save
 ```
 
-2.   暗转`hexo-renderer-markdown-it`
+2. 暗转`hexo-renderer-markdown-it`
 
 ```bash
 npm install hexo-renderer-markdown-it --save
@@ -95,9 +95,9 @@ npm install hexo-renderer-markdown-it --save
 # Markdown-it
 markdown:
   plugins:
-    - markdown-it-sub
-    - markdown-it-sup
-    - markdown-it-footnote
+  - markdown-it-sub
+  - markdown-it-sup
+  - markdown-it-footnote
 ```
 
 ## 主题配置

@@ -3,10 +3,10 @@ title: C++ 01 - 入门
 date: 2023-07-14 11:18:59
 updated: 2023-07-16 19:00:00
 tags:
-    - CXX
-    - C
+  - CXX
+  - C
 categories:
-    - CXX
+  - CXX
 ---
 
 &emsp;&emsp;一些基础的 C++ 知识。
@@ -560,7 +560,7 @@ decltype(obj_temp.i) x = 0;
 
 &emsp;&emsp;一些使用结构化绑定的例子：
 
-1.   C 风格数组
+1. C 风格数组
 
 &emsp;&emsp;对原生数组使用结构化绑定时，上下文不能丢失数组长度的信息，即如果数组发生退化时就无法使用。
 
@@ -572,7 +572,7 @@ auto [a, b, c] (arr);
 auto [a, b, c] { arr };
 ```
 
-2.   结构体和类
+2. 结构体和类
 
 &emsp;&emsp;结构化绑定只能用于有 public 成员的类和结构体，并且解构时按照声明顺序匹配。
 
@@ -587,7 +587,7 @@ data obj;
 auto [a, b] = obj;
 ```
 
-3.   pair，tuple 和 array
+3. pair，tuple 和 array
 
 &emsp;&emsp;现在配合 if，range-based for，switch 的初始化器，使用结构化绑定来遍历标准容器十分方便。
 

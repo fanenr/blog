@@ -3,10 +3,10 @@ title: CMake 04 - 构建工程
 date: 2023-06-27 10:47:57
 updated: 2023-06-28 19:00:00
 tags:
-    - CMake
-    - CXX
+  - CMake
+  - CXX
 categories:
-    - [Build, CMake]
+  - [Build, CMake]
 ---
 
 &emsp;&emsp;正式开始使用 CMake 来构建 C/C++ 工程。

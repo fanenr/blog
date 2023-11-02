@@ -3,10 +3,10 @@ title: CMake 01 - 概念
 date: 2023-06-24 18:55:57
 updated: 2023-06-25 19:00:00
 tags:
-    - CMake
-    - CXX
+  - CMake
+  - CXX
 categories:
-    - [Build, CMake]
+  - [Build, CMake]
 ---
 
 &emsp;&emsp;简单记录一下学习 CMake 工具的过程。

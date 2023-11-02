@@ -3,10 +3,10 @@ title: CMake 02 - 语法基础
 date: 2023-06-25 09:57:21
 updated: 2023-06-26 19:00:00
 tags:
-    - CMake
-    - CXX
+  - CMake
+  - CXX
 categories:
-    - [Build, CMake]
+  - [Build, CMake]
 ---
 
 &emsp;&emsp;CMake 使用自己的脚本语言 CMake 来控制整个构建流程。
