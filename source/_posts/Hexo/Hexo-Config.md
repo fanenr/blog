@@ -77,7 +77,7 @@ search:
 npm uninstall hexo-renderer-marked --save
 ```
 
-2. 暗转`hexo-renderer-markdown-it`
+2. 安装`hexo-renderer-markdown-it`
 
 ```bash
 npm install hexo-renderer-markdown-it --save
@@ -206,7 +206,7 @@ leancloud_visitors:
 
 &emsp;&emsp;评论系统不太好整，但也不是太复杂。首先还是要注册 LeanCloud 并且在应用中创建`Comment`数据表。我使用 Valine 的评论系统，因为目前 Next 主题直接支持的评论系统不算多。而且 Valine 足够简单。首先要开启评论，并且启用 Valine。然后配置 Valine。
 
-```
+```yaml
 # Multiple Comment System Support
 comments:
   style: tabs
