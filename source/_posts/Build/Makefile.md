@@ -39,7 +39,7 @@ target ... : prerequisites ...
 
 &emsp;&emsp;recipe 是该 target 要执行的命令。
 
-&emsp;&emsp;规则说明了一些文件之间的依赖关系：target 这一个或多个目标依赖于 prerequistes 中的文件或目标，command 即生成目标所需的志玲。如果 prerequistes 中有一个以上的文件比 target 文件要新或 target 不存在，则 recipe 所定义的命令就会被执行。
+&emsp;&emsp;规则说明了一些文件之间的依赖关系：target 这一个或多个目标依赖于 prerequistes 中的文件或目标，command 即生成目标所需的指令。如果 prerequistes 中有一个以上的文件比 target 文件要新或 target 不存在，则 recipe 所定义的命令就会被执行。
 
 ## 流程
 
@@ -141,7 +141,7 @@ targets : prerequisites ; command
 
 &emsp;&emsp;prerequistes 是目标所依赖的文件或目标，如果其中某个依赖文件比目标文件要新 (修改时间)，那么目标就是`过时`的，被确认为要被重新生成。
 
-&emsp;&emsp;生成一个目标的命令可以有多个，即可以有多行 command。如果命令太长，可以使用 \ 作为换行符。
+&emsp;&emsp;生成目标的命令可以有多个：可以有多行 command。如果命令太长，可以使用 \ 换行。
 
 ### 通配符
 
@@ -226,3 +226,6 @@ bar.o: bar.c
 
 &emsp;&emsp;静态模式是基于模式匹配的，所以这里的 foo 只依赖 foo.c 而不包含 bar.c。此外，依赖模式可以有多个，但是 $< 只能取第一个依赖文件。
 
+## 书写命令
+
+&emsp;&emsp;
