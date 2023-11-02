@@ -21,6 +21,7 @@
     
     "hexo-server": "latest",
     "hexo-word-counter": "latest",
+    "hexo-related-posts": "latest",
     
     "hexo-theme-next": "latest",
     "hexo-waline-next": "latest",
