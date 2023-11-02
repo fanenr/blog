@@ -1,6 +1,7 @@
 ---
 title: My Hexo Blog
 date: 2023-06-22 12:53:25
+updated: 2023-06-23 19:00:00
 tags:
     - Hexo
     - Blog

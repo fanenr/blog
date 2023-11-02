@@ -1,6 +1,7 @@
 ---
 title: Hexo Config
 date: 2023-06-22 19:48:33
+updated: 2023-06-23 19:00:00
 tags:
     - Hexo
     - Blog

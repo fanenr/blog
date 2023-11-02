@@ -1,6 +1,7 @@
 ---
 title: Fedora Backup
 date: 2023-10-16 20:46:42
+updated: 2023-10-17 19:00:00
 tags:
     - Fedora
 categories:
