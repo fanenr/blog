@@ -3,9 +3,9 @@ title: Fedora Backup
 date: 2023-10-16 20:46:42
 updated: 2023-10-17 19:00:00
 tags:
-    - Fedora
+  - Fedora
 categories:
-    - [Linux, Fedora]
+  - [Linux, Fedora]
 ---
 
 &emsp;&emsp;我的一些系统配置和插件。
@@ -38,12 +38,12 @@ categories:
 
 &emsp;&emsp;先安装 User Themes 插件 (Extension)，然后安装 tweak 工具：gnome-tweak (dnf)。
 
-|        | Theme              | Remark                                                       |
-| ------ | ------------------ | ------------------------------------------------------------ |
-| GTK    | Orchis gtk theme   | 只对 legacy app 生效。把主题中的 GTK4 文件 (~/.themes/theme/gtk4.0) copy 到 ~/.config/gtk4.0 目录中，可改变 GTK4 应用的主题。 |
-| GRUB   | Vimix              | 我这不生效。                                                 |
-| Shell  | Marble Shell theme | 可以装在用户目录 ~/.themes 下。                              |
-| Cursor | Bibata Modern Ice  | 装在 /usr/share/icons 而不是 ~/.icons 下。                   |
+|        | Theme              | Remark                                     |
+| ------ | ------------------ | ------------------------------------------ |
+| GTK    | Orchis gtk theme   | 只对 legacy app 生效。                     |
+| GRUB   | Vimix              | 我这不生效。                               |
+| Shell  | Marble Shell theme | 可以装在用户目录 ~/.themes 下。            |
+| Cursor | Bibata Modern Ice  | 装在 /usr/share/icons 而不是 ~/.icons 下。 |
 
 ## Fonts
 

@@ -3,10 +3,10 @@ title: CMake 03 - 语法补充
 date: 2023-06-25 17:17:31
 updated: 2023-06-27 19:00:00
 tags:
-    - CMake
-    - CXX
+  - CMake
+  - CXX
 categories:
-    - [Build, CMake]
+  - [Build, CMake]
 ---
 
 &emsp;&emsp;这里总结其他 CMake 语言细节，来作为对 CMake 02 的补充。

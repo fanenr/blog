@@ -3,10 +3,10 @@ title: CSAPP 01 - 初探
 date: 2023-07-09 17:29:37
 updated: 2023-07-12 19:00:00
 tags:
-    - CSAPP
-    - C
+  - CSAPP
+  - C
 categories:
-    - CSAPP
+  - CSAPP
 ---
 
 &emsp;&emsp;计算机系统是由硬件和软件组成的，他们共同工作来运行应用程序。

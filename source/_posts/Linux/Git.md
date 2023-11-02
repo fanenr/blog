@@ -3,9 +3,9 @@ title: Git
 date: 2023-10-24 21:48:08
 updated: 2023-11-01 19:00:00
 tags:
-    - Git
+  - Git
 categories:
-    - [Linux, Tool]
+  - [Linux, Tool]
 ---
 
 &emsp;&emsp;一些必备且常用的 Git 知识。
@@ -32,15 +32,15 @@ sudo dnf in git-all
 
 &emsp;&emsp;安装 Git 后需要配置一些变量，这些变量将控制 Git 的外观和行为，它们存储在 3 个不同的位置：
 
-1.   /etc/gitconfig
+1. /etc/gitconfig
 
 &emsp;&emsp;该文件包含系统上每一个用户及他们仓库的通用配置。 如果在执行 git config 时带上 --system 选项，那么它就会读写该文件中的配置变量。
 
-2.   \~/.gitconfig or \~/git/config
+2. \~/.gitconfig or \~/git/config
 
 &emsp;&emsp;该文件只针对当前用户。可以传递 --global 选项让 Git 读写此文件，这会对系统上所有的仓库生效。
 
-3.   anyrepo/.git/config
+3. anyrepo/.git/config
 
 &emsp;&emsp;每个 Git 仓库都有一个该文件，它只对当前仓库生效。如果在执行 git config 时带上 --local 选项，那么就会读写该文件，这也是默认行为。 
 
@@ -155,7 +155,7 @@ M lib/simplegit.rb
 
 &emsp;&emsp;add 是一个多功能命令：可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等。
 
-1.   跟踪一个新文件
+1. 跟踪一个新文件
 
 ```bash
 git add newfile
@@ -163,7 +163,7 @@ git add newfile
 
 &emsp;&emsp;newfile 将被加入暂存区。
 
-2.   将一个已跟踪文件加入暂存区
+2. 将一个已跟踪文件加入暂存区
 
 ```bash
 git add modfile
@@ -439,7 +439,7 @@ git branch -D  notmerged
 
 &emsp;&emsp;由于本地仓库和远程仓库时分隔的，一种联系本地分支和远程的方式就是让本地分支跟踪远程分支。
 
-1.   一个已有的分支
+1. 一个已有的分支
 
 &emsp;&emsp;可以使用 branch 的 -u 选项让一个本地分支跟踪远程分支：
 
@@ -448,7 +448,7 @@ git checkout master
 git branch -u origin/master
 ```
 
-2.   直接从远程仓库创建分支
+2. 直接从远程仓库创建分支
 
 &emsp;&emsp;从远程分支上直接创建一个本地分支也会自动跟踪它：
 
@@ -457,7 +457,7 @@ git checkout origin/master
 git checkout -b master
 ```
 
-3.   其他方式
+3. 其他方式
 
 &emsp;&emsp;还有很多其他方式：
 
@@ -483,7 +483,7 @@ git pull
 
 &emsp;&emsp;stash 命令以及其子命令用于完成贮藏工作。贮藏会将当前工作目录中的变动 (相对于上一次提交) 保存起来，并打包成一个镜像放入栈中。然后工作目录就被恢复成上一次提交时的样子。
 
-1.   创建贮藏
+1. 创建贮藏
 
 ```bash
 git stash
@@ -499,7 +499,7 @@ git stash -a
 
 &emsp;&emsp;二者的区别在于：-u 只会保存未跟踪文件，但是 -a 还会保存 .gitignore 中忽略的文件。
 
-2.   查看贮藏
+2. 查看贮藏
 
 &emsp;&emsp;使用 stash 的 list 子命令，可以查看分支上所有贮藏镜像：
 
@@ -507,7 +507,7 @@ git stash -a
 git stash list
 ```
 
-3.   删除贮藏
+3. 删除贮藏
 
 &emsp;&emsp;使用 stash 的 drop 子命令，可以删除指定贮藏镜像：
 
@@ -515,7 +515,7 @@ git stash list
 git stash drop 2
 ```
 
-4.   恢复贮藏
+4. 恢复贮藏
 
 &emsp;&emsp;使用 stash 的 apply 子命令，可以恢复指定贮藏到工作区 (不指定则为最近一次记录)：
 

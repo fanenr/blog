@@ -3,10 +3,10 @@ title: Makefile
 date: 2023-10-01 19:57:29
 updated: 2023-11-01 19:57:29
 tags:
-    - Make
-    - C
+  - Make
+  - C
 categories:
-    - [Build, Make]
+  - [Build, Make]
 ---
 
 &emsp;&emsp;学习一下 GNU Make。
@@ -28,15 +28,15 @@ target ... : prerequisites ...
 	...
 ```
 
--   target
+- target
 
 &emsp;&emsp;target 可以是一个 object file，也可以是可执行文件，还可以是一个标签。
 
--   prerequisites
+- prerequisites
 
 &emsp;&emsp;prerequisites 是生成该 target 所依赖的文件或者目标。
 
--   recipe
+- recipe
 
 &emsp;&emsp;recipe 是该 target 要执行的命令。
 
@@ -83,10 +83,10 @@ clean :
 
 &emsp;&emsp;在默认的方式下，只输入 make 命令，那么：
 
-1.   make 会在当前目录下寻找名为 Makefile 或 makefile 的文件。如果找到，它会把文件中第一个目标 edit 作为最终目标。
-3.   如果最终目标 edit 不存在，或是 edit 所依赖的文件修改时间比 edit 要新，那么它就会执行后面的命令来生成 edit。
-4.   如果 edit 所依赖的文件 (object file) 也不存在，那么 make 就会在当前文件中寻找目标为该文件的规则，然后则根据该规则来生成缺失的依赖文件 (这是一个递归过程)。
-5.   因为 C 文件和头文件总是存在的，所以 make 会先生成中间文件，然后用中间文件生成 edit 文件。
+1. make 会在当前目录下寻找名为 Makefile 或 makefile 的文件。如果找到，它会把文件中第一个目标 edit 作为最终目标。
+3. 如果最终目标 edit 不存在，或是 edit 所依赖的文件修改时间比 edit 要新，那么它就会执行后面的命令来生成 edit。
+4. 如果 edit 所依赖的文件 (object file) 也不存在，那么 make 就会在当前文件中寻找目标为该文件的规则，然后则根据该规则来生成缺失的依赖文件 (这是一个递归过程)。
+5. 因为 C 文件和头文件总是存在的，所以 make 会先生成中间文件，然后用中间文件生成 edit 文件。
 
 &emsp;&emsp;像 clean 这种没有被第一个目标直接或间接关联的目标，它后面所指定的命令将不会被自动执行。但是，可以通过显式的要求让 make 生成某个目标：make clean。
 
@@ -94,23 +94,23 @@ clean :
 
 &emsp;&emsp;Makefile 中主要包含 5 部分：显式规则，隐式规则，变量定义，指令和注释。
 
--   显式规则
+- 显式规则
 
 &emsp;&emsp;显式规则说明如何生成一个或多个目标文件，Makefile 书写者应明显指出要生成的文件，文件的依赖文件以及生成命令。
 
--   隐式规则
+- 隐式规则
 
 &emsp;&emsp;由于 GNU make 有自动推导功能，所以隐式规则允许书写简略的 Makefile。
 
--   变量定义
+- 变量定义
 
 &emsp;&emsp;可以在 Makefile 中定义一系列变量，变量一般都是字符串。当 Makefile 被执行时，其中的变量会被扩展到相应的引用位置上。这十分类似 C 中的宏定义和预处理。
 
--   指令
+- 指令
 
 &emsp;&emsp;指令包含 3 部分：其一是在一个 Makefile 中引用另一个 Makefile，像 C 中的 include。另一个是根据条件指定 Makefile 中的有效部分，像 C 中的 #if。最后是可以定义一个多行的命令。
 
--   注释
+- 注释
 
 &emsp;&emsp;Makefile 中只有行注释，使用 # 字符。如果要使用该字符，应该转义`\#`。
 

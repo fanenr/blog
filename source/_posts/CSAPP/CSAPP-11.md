@@ -3,10 +3,10 @@ title: CSAPP 11 - 网络编程
 date: 2023-08-23 12:12:25
 updated: 2023-08-26 19:00:00
 tags:
-    - CSAPP
-    - C
+  - CSAPP
+  - C
 categories:
-    - CSAPP
+  - CSAPP
 ---
 
 &emsp;&emsp;网络应用由一个服务器进程和一个或者多个客户端进程组成。
@@ -17,10 +17,10 @@ categories:
 
 &emsp;&emsp;每个网络应用都是基于**客户端 - 服务器**模型的。服务器管理某种资源，并且通过操作这种资源来为他的客户端提供某种服务。客户端 - 服务器模型中的基本操作是`事务`，一个事务由以下四步组成：
 
-1.   当客户端需要服务时，它向服务器发送一个请求，发起一个事务。
-2.   服务器收到请求后，解决它，并以适当的方式操作他的资源。
-3.   服务器给客户端发送一个响应，并等待下一个请求。
-4.   客户端接受到响应并且处理它。
+1. 当客户端需要服务时，它向服务器发送一个请求，发起一个事务。
+2. 服务器收到请求后，解决它，并以适当的方式操作他的资源。
+3. 服务器给客户端发送一个响应，并等待下一个请求。
+4. 客户端接受到响应并且处理它。
 
 ![](01.png)
 
@@ -52,8 +52,8 @@ categories:
 
 &emsp;&emsp;互联网络的一个关键特性是：它可以由使用完全不同且不兼容技术的局域网和广域网组成。因此，必须在每台主机和路由器上运行**协议软件**来消除不同网络之间的差异。该软件实现的协议将管理主机和路由器如何协作以传输数据，它提供以下两个基本功能：
 
--   命名机制：为主机地址定义统一的格式，并为每台主机分配至少一个唯一标识它的互联网地址 (IP 地址)。
--   传送机制：定义一种统一的方式将数据位封装为若干个不连续的块，即数据包。一个包是由**包头**和**有效载荷**组成的，包头中包含了包的大小以及源主机和目的主机的地址，有效载荷包括从源主机发送的数据位。
+- 命名机制：为主机地址定义统一的格式，并为每台主机分配至少一个唯一标识它的互联网地址 (IP 地址)。
+- 传送机制：定义一种统一的方式将数据位封装为若干个不连续的块，即数据包。一个包是由**包头**和**有效载荷**组成的，包头中包含了包的大小以及源主机和目的主机的地址，有效载荷包括从源主机发送的数据位。
 
 &emsp;&emsp;一个利用互联网络协议使主机和路由器在两个不兼容的局域网之间通信的示例：
 
@@ -71,9 +71,9 @@ categories:
 
 &emsp;&emsp;从程序员角度，可以将因特网看作一个世界范围的主机集合，满足以下特性：
 
--   主机集合被映射为一组 32 位的 IP 地址。
--   这组 IP 地址被映射为一组因特网域名。
--   因特网主机上的进程能通过链接和任何其他因特网主机上的进程通信。
+- 主机集合被映射为一组 32 位的 IP 地址。
+- 这组 IP 地址被映射为一组因特网域名。
+- 因特网主机上的进程能通过链接和任何其他因特网主机上的进程通信。
 
 ### IP 地址
 
@@ -225,7 +225,7 @@ int accept(int listenfd, struct sockaddr *addr, int *addrlen);
 
 &emsp;&emsp;Linux 提供了一些强大的函数实现二进制套接字地址结构和主机名，主机地址，服务名和端口号的字符串表示之间的转化。可以配合与套接字接口一起使用，编写独立于任何特定版本的 IP 协议的网络程序：
 
-1.   getaddrinfo 函数
+1. getaddrinfo 函数
 
 &emsp;&emsp;getaddrinfo 函数将主机名 (或主机地址) 和服务名 (或端口号) 转换为套接字地址结构体：
 
@@ -258,19 +258,19 @@ int getaddrinfo(const char *host, const char *service,
 
 &emsp;&emsp;当 hints 作为参数传递时，只有 ai_family，ai_socktype，ai_protocol 和 ai_flags 字段可以被设置，其他字段必须为 0 或 NULL。在实际使用中，会使用 memset 函数将 hints 归零，然后设置以下字段：
 
--   ai_family 为 AF_INET 时，该函数将生成 IPv4 套接字地址。ai_family 为 AF_INET6 时，该函数将生成 IPv6 套接字地址。
+- ai_family 为 AF_INET 时，该函数将生成 IPv4 套接字地址。ai_family 为 AF_INET6 时，该函数将生成 IPv6 套接字地址。
 
--   对于面向连接的网络应用程序，ai_socktype 应当设为 SOCK_STREAM。
+- 对于面向连接的网络应用程序，ai_socktype 应当设为 SOCK_STREAM。
 
--   ai_flags 是能够修改函数默认行为的位掩码，主要包括：
+- ai_flags 是能够修改函数默认行为的位掩码，主要包括：
 
-    -   AI_ADDRCONFIG：仅当本地主机使用 IPv4 时生成 IPv4 Socket 地址。
+  - AI_ADDRCONFIG：仅当本地主机使用 IPv4 时生成 IPv4 Socket 地址。
 
-    -   AI_CANONNAME：默认情况下，addrinfo 结构体内的 ai_canonname 字段为 NULL。若设置该掩码，函数会将链表中第一个 addrinfo 结构体内的 ai_canonname 字段指向主机的规范名称。
+  - AI_CANONNAME：默认情况下，addrinfo 结构体内的 ai_canonname 字段为 NULL。若设置该掩码，函数会将链表中第一个 addrinfo 结构体内的 ai_canonname 字段指向主机的规范名称。
 
-    -   AI_NUMERICSERV：强制参数 service 使用端口号。
+  - AI_NUMERICSERV：强制参数 service 使用端口号。
 
-    -   AI_PASSIVE：服务器可以使用该函数生成的套接字地址创建监听描述符。在这种情况下，参数 host 应当设为 NULL，表示服务器的所有 IP 地址均可用于连接 (即 INADDR_ANY 或 0.0.0.0)。
+  - AI_PASSIVE：服务器可以使用该函数生成的套接字地址创建监听描述符。在这种情况下，参数 host 应当设为 NULL，表示服务器的所有 IP 地址均可用于连接 (即 INADDR_ANY 或 0.0.0.0)。
 
 &emsp;&emsp;当 getaddrinfo 初始化 addrinfo 结构体链表时，它会填充除 ai_flags 之外的所有字段。ai_family，ai_socktype 和 ai_protocol 可以直接传递给 socket 函数，ai_addr 和 ai_addrlen 可以直接传递给 connect 和 bind 函数。因此能够使用它编写适用于任何版本 IP 协议的客户端和服务器。
 
@@ -286,7 +286,7 @@ void freeaddrinfo(struct addrinfo *result);
 const char *gai_strerror(int errcode);
 ```
 
-2.   getnameinfo 函数
+2. getnameinfo 函数
 
 &emsp;&emsp;getnameinfo 函数功能和 gethostinfo 正好相反，它可以将一个套接字地址结构转化为相应的主机和服务名字符串，并且它是可重入和与协议无关的：
 
@@ -301,8 +301,8 @@ int getnameinfo(const struct sockaddr *sa, socklen_t salen,
 
 &emsp;&emsp;参数 flags 是修改函数默认行为的位掩码，包括：
 
--   NI_NUMERICHOST：默认情况下，函数将在 host 指向的缓冲区中生成一个域名。若设置该掩码，函数会生成一个数字地址字符串。
--   NI_NUMERICSERV：默认情况下，函数将在 etc/services 件中查找并生成服务名。若设置该掩码，函数会跳过查找并生成端口号。
+- NI_NUMERICHOST：默认情况下，函数将在 host 指向的缓冲区中生成一个域名。若设置该掩码，函数会生成一个数字地址字符串。
+- NI_NUMERICSERV：默认情况下，函数将在 etc/services 件中查找并生成服务名。若设置该掩码，函数会跳过查找并生成端口号。
 
 &emsp;&emsp;TODO 示例代码：
 
@@ -434,8 +434,8 @@ void echo(int client_fd)
 
 &emsp;&emsp;Web 服务器通过两种不同的方式向客户端提供内容：
 
-1.   服务静态内容：取一个磁盘文件 (静态内容)，并将磁盘文件的内容返回给客户端。
-2.   服务动态内容：运行一个可执行文件，并将他的输出返回给客户端。
+1. 服务静态内容：取一个磁盘文件 (静态内容)，并将磁盘文件的内容返回给客户端。
+2. 服务动态内容：运行一个可执行文件，并将他的输出返回给客户端。
 
 &emsp;&emsp;每条 Web 服务器返回的内容都是和他管理的某个文件相关联的。这些文件中的每一个都有一个唯一的名字，叫做 URL，例如 URL：
 
@@ -455,7 +455,7 @@ http://bluefish.ics.cs.cmu.edu:8000/cgi-bin/adder?15000&213
 telnet www.aol.com:80
 ```
 
-1.   HTTP 请求
+1. HTTP 请求
 
 &emsp;&emsp;一个 HTTP 请求组成包括：一个请求行，后面跟随零个或多个请求报头，再跟随一个空的文本行来终止报头列表。请求行的形式是：
 
@@ -473,7 +473,7 @@ method URI version
 header-name: header-data
 ```
 
-2.   HTTP 响应
+2. HTTP 响应
 
 &emsp;&emsp;HTTP 响应和 HTTP 请求是类似的。一个 HTTP 响应的组成包括：一个响应行，后面跟随着零个或多个响应报头，再跟随一个终止报头的空行，再跟随一个响应主体。一个响应行的格式是：
 
@@ -491,13 +491,13 @@ version status-code status-message
 
 &emsp;&emsp;服务器向客户端提供动态内容可以使用 CGI 标准来实现。
 
-1.   客户端将参数传递给服务器
+1. 客户端将参数传递给服务器
 
 &emsp;&emsp;GET 请求的参数在 URI 中传递。? 分隔了文件名和参数列表，每个参数使用 & 分隔。参数中不能有空格，必须用字符 %20 表示，其他特殊字符类似。
 
 &emsp;&emsp;POST 请求中，参数在请求主体而不是 URI 中。
 
-2.   服务器将参数传递给子进程
+2. 服务器将参数传递给子进程
 
 &emsp;&emsp;如果服务器接收到一个请求：
 
@@ -507,13 +507,13 @@ GET /cgi-bin/adder?15000&213 HTTP/1.1
 
 &emsp;&emsp;它调用 fork 创建一个子进程，并调用 execve 在子进程的上下文中执行 /cgi-bin/adder 程序。像 adder 这样的程序，被称为 CGI 程序，他们遵守 CGI 标准。在调用 execve 之前，子进程将 CGI 环境变量 QUERY_STRING 设置为 15000&213，adder 程序在运行时可以使用 getenv 函数来引用它。
 
-3.   服务器将其他信息传递给子进程
+3. 服务器将其他信息传递给子进程
 
 &emsp;&emsp;CGI 定义了大量的环境变量，一个 CGI 程序在他运行时可以设置这些环境变量：
 
 ![](14.png)
 
-4.   子进程将输出发送到哪里
+4. 子进程将输出发送到哪里
 
 &emsp;&emsp;一个 CGI 程序将它的动态内容发送到标准输出。在子进程加载并运行 CGI 程序之前，它使用 dup2 函数将标准输出重定向到和客户端相关联的已连接描述符。因此，任何 CGI 程序写到标准输出的东西都会直接到达客户端。
 

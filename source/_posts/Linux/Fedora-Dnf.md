@@ -3,9 +3,9 @@ title: Fedora Dnf
 date: 2023-10-21 10:52:18
 updated: 2023-10-22 19:00:00
 tags:
-    - Fedora
+  - Fedora
 categories:
-    - [Linux, Fedora]
+  - [Linux, Fedora]
 ---
 
 &emsp;&emsp;一些必备且常用的 Dnf 用法。

@@ -3,9 +3,9 @@ title: 关于编辑器
 date: 2023-11-02 16:00:00
 updated: 2023-11-02 19:00:00
 tags:
-    - Life
+  - Life
 categories:
-    - Life
+  - Life
 ---
 
 &emsp;&emsp;写 Blog 已经有几个月了，关于编辑器的使用我也有了一些体会。

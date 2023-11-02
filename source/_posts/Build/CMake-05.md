@@ -3,10 +3,10 @@ title: CMake 05 - 补充内容
 date: 2023-07-06 19:01:30
 updated: 2023-07-08 19:00:00
 tags:
-    - CMake
-    - CXX
+  - CMake
+  - CXX
 categories:
-    - [Build, CMake]
+  - [Build, CMake]
 ---
 
 &emsp;&emsp;补充一些 CMake 的其他知识。
