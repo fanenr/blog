@@ -1,7 +1,7 @@
 ---
 title: Makefile
 date: 2023-10-01 19:57:29
-updated: 2023-11-01 19:57:29
+updated: 2023-11-02 21:00:00
 tags:
   - Make
   - C
@@ -229,4 +229,105 @@ bar.o: bar.c
 
 ## 书写命令
 
-&emsp;&emsp;
+&emsp;&emsp;规则中的每条命令都和 shell 中的命令一致。make 会按顺序一条条的执行命令，除非命令紧跟着依赖规则后的分号，否则每条命令必须以 Tab 键开头。在命令之间的空格或空行会被忽略，但如果该空格或空行是以Tab键开头的，那么make会认为其是一个空命令。
+
+### 显示命令
+
+&emsp;&emsp;通常，make 会在将要执行命令前输出要执行的命令行。如果希望 make 不输出该命令行，可以在该命令行前加上字符 `@`：
+
+```makefile
+all:
+	@echo nothing
+```
+
+&emsp;&emsp;此外，在运行 make 时可以使用 -n 选项。这意味着只输出将被执行的命令，而不实际执行：
+
+```bash
+make -n
+```
+
+### 命令执行
+
+&emsp;&emsp;默认情况下，make 会为每一条命令创建独立的环境。也就是说，后一条命令只是在时间上比前一条命令后执行，而不是在前一条命令的基础上被执行的：
+
+```makefile
+all:
+	cd sub
+	pwd
+```
+
+&emsp;&emsp;pwd 命令并不会显示当前位于 sub，这是因为它们之间是被隔离的。
+
+&emsp;&emsp;如果希望命令在同一环境中被执行，可以将它们放在一行，并以分号隔开：
+
+```makefile
+all:
+	cd sub; pwd
+
+# or
+
+all:
+	cd sub; \
+	pwd
+```
+
+### 命令出错
+
+&emsp;&emsp;每执行完一条命令，make 会检测 shell 的终止状态。如果异常终止，make 就会结束工作。
+
+&emsp;&emsp;如果希望忽略错误继续执行，则可以在命令行前加上字符`-`：
+
+```makefile
+clean:
+	-rm -f *.o
+```
+
+### 嵌套 make
+
+&emsp;&emsp;一个复杂的工程可能包含很多子模块，它们分别被独立管理和编译。在一个 Makefile 中编写所有的规则会增加维护难度，所以可以进行适当的拆分。
+
+&emsp;&emsp;根目录下的 Makefile 可当作总控文件，它会管理每个子 Makefile。当需要编译时，总控文件会调用 make 执行每个子 Makefile：
+
+```makefile
+all:
+	cd sub && make
+	...
+```
+
+&emsp;&emsp;上面的写法可以简化为：
+
+```makefile
+all:
+	$(MAKE) -C sub
+```
+
+&emsp;&emsp;当父 Makefile 嵌套执行子 Makefile 时，父文件中的变量默认会被传递给子文件，但是不会覆盖子 Makefile 中已存在的变量，子文件可以重定义这些变量。
+
+&emsp;&emsp;可以显式的要求传递或不传递某个变量到子文件中：
+
+```makefile
+export
+export var1
+export var2  = true
+export var3 := true
+
+unexport var1 var2 var3
+```
+
+&emsp;&emsp;一个空的 export 表示传递所有变量。
+
+### 命令包
+
+&emsp;&emsp;命令包效果类似将命令放到变量中，适合复用命令：
+
+```makefile
+define cmds
+cd sub; \
+pwd
+endef
+
+all:
+	$(cmds)
+```
+
+&emsp;&emsp;使用 define 和 endef 关键字包裹命令，并在 define 后跟上命令包的名字。使用命令包就和使用变量一样，它的效果类似直接将变量展开。
