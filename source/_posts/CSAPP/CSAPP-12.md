@@ -1,6 +1,7 @@
 ---
 title: CSAPP 12 - 并发编程
 date: 2023-09-06 17:25:27
+updated: 2023-09-15 19:00:00
 tags:
     - CSAPP
     - C
@@ -920,4 +921,4 @@ void *thread(void *vargp)
 
 ![](16.png)
 
-&emsp;&emsp;19:31 15-09-2023.
+&emsp;&emsp;19:30 Nov 15 2023.

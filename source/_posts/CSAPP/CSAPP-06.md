@@ -1,6 +1,7 @@
 ---
 title: CSAPP 06 - 储存器
 date: 2023-08-03 17:52:27
+updated: 2023-08-06 19:00:00
 tags:
     - CSAPP
     - C
