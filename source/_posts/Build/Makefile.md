@@ -1,7 +1,7 @@
 ---
 title: Makefile
 date: 2023-10-01 19:57:29
-updated: 2023-11-03 21:00:00
+updated: 2023-11-05 13:51:45
 tags:
   - Make
   - C
@@ -282,7 +282,7 @@ clean:
 	-rm -f *.o
 ```
 
-### 嵌套 make
+### 嵌套执行
 
 &emsp;&emsp;一个复杂的工程可能包含很多子模块，它们分别被独立管理和编译。在一个 Makefile 中编写所有的规则会增加维护难度，所以可以进行适当的拆分。
 
@@ -334,7 +334,9 @@ all:
 
 ## 使用变量
 
-&emsp;&emsp;Makefile 中的变量类似 C 中的宏。因为 make 是一个批处理工具，所以这里的变量没有很复杂的性质：变量没有类型：都是列表，变量名区分大小写，变量默认都是全局的。
+&emsp;&emsp;Makefile 中的变量类似 C 中的宏。因为 make 是一个批处理工具，所以这里的变量没有很复杂的性质：变量没有类型：都是字符串，变量名区分大小写，变量默认都是全局的。
+
+&emsp;&emsp;可以将变量理解为英文句子，这个句子整体上是一个字符串，但又可以被其中的空格，Tab 或换行符分成一个一个的单词。大部分情况下，make 都直接使用句子整体。而有时，make 又以单词为单位处理变量。
 
 ### 赋值和引用
 
@@ -347,7 +349,7 @@ var3 ?= true
 var4 += a.c
 ```
 
-&emsp;&emsp;使用`=`为变量赋值时，make 会在全文件范围内处理变量的引用。使用`:=`为变量赋值时，make 会按照先定义后使用的方式处理变量引用。符号`?=`的含义是：若变量未定义则此语句生效，若变量已定义则语句无效。符号`+=`的作用是在变量末尾追加一项元素。
+&emsp;&emsp;使用`=`为变量赋值时，make 会在全文件范围内处理变量的引用。使用`:=`为变量赋值时，make 会按照先定义后使用的方式处理变量引用。符号`?=`的含义是：若变量未定义则此语句生效，若变量已定义则语句无效。符号`+=`的作用是在变量末尾追加子串，并且会在子串前插入一个空格。
 
 &emsp;&emsp;引用变量的方式有 3 种：
 
@@ -372,9 +374,9 @@ space := $(NULL)
 
 ### 高级用法
 
-&emsp;&emsp;GNU make 支持一些语法糖：
+&emsp;&emsp;GNU make 支持一些变量的高级用法：
 
-1. 快速替换变量中的某些部分
+1. 快速替换变量中子串
 
 ```makefile
 foo := a.o b.o c.o
@@ -385,14 +387,16 @@ bar := $(foo:.o=.c)
 bar := a.c b.c c.c
 ```
 
-&emsp;&emsp;这将替换变量 foo 中所有元素的子字符串`.o`为`.c`。另一种方法是使用静态模式：
+&emsp;&emsp;这将替换变量 foo 中子字符串`.o`为`.c`。另一种方法是使用静态模式：
 
 ```makefile
 foo := a.o b.o c.o
 bar := $(foo:%.o=%.c)
 ```
 
-&emsp;&emsp;二者效果大体一致。
+&emsp;&emsp;经过实验，GNU make 会把第一种替换语法当作静态模式处理，也就是是说：所有搜索的子串都被前置了模式符`%`，所以这种语法糖只能从字符串尾部开始查找，替换。
+
+&emsp;&emsp;这两种替换都是基于单词而不是句子整体的，其实它们都是内置函数 patsubst 的语法糖。
 
 2. 变量嵌套
 
@@ -456,8 +460,103 @@ bar.o : bar.c
 
 ### 模式变量
 
-&emsp;&emsp;make 中的模式至少包含一个字符`%`。通过模式，可以为所有符合这种模式的目标批量添加规则。这其中也包括了上面的目标变量：
+&emsp;&emsp;make 中的模式至少包含一个`%`字符。通过模式语法，可以为所有符合这种模式的目标批量添加规则。在模式变量中也可以使用上面的目标变量：
 
 ```makefile
 %.o: CFLAGS := -g
 ```
+
+## 条件分支
+
+&emsp;&emsp;条件分支在编程语言中很常见，Makefile 也支持一些基础的分支语法。
+
+```makefile
+<conditional-directive-one>
+<text-if-one-is-true>
+else <conditional-directive-two>
+<text-if-two-is-true>
+else
+<text-if-one-and-two-are-false>
+endif
+```
+
+&emsp;&emsp;条件分支必须以一个分支表达式开始，中间可以有 else 分支，最后必须以`endif`关键字标记结束。make 支持的分支关键字有：`ifeq`, `ifneq`, `ifdef`, `ifndef`：前一对用于判断两个值是否相等 (或不等)，后一对用于判断一个变量是否有值 (或无值)。
+
+&emsp;&emsp;分支关键字`ifeq`和`ifneq`的语法是：
+
+```makefile
+ifneq (arg1, arg2)
+ifneq 'arg1' 'arg2'
+ifneq "arg1" "arg2"
+ifneq "arg1" 'arg2'
+ifneq 'arg1' "arg2"
+```
+
+&emsp;&emsp;这里的 arg 可以是字面量，也可以是引用变量或调用函数接结果。
+
+&emsp;&emsp;一些例子：
+
+```makefile
+libs_for_gcc = -lgnu
+normal_libs =
+
+foo: $(objects)
+ifeq ($(CC),gcc)
+    $(CC) -o foo $(objects) $(libs_for_gcc)
+else
+	$(CC) -o foo $(objects) $(normal_libs)
+endif
+```
+
+&emsp;&emsp;可以将分支直接插入到规则中，但更清晰的写法是：
+
+```makefile
+libs_for_gcc = -lgnu
+normal_libs =
+
+ifeq ($(CC),gcc)
+	libs=$(libs_for_gcc)
+else
+	libs=$(normal_libs)
+endif
+
+foo: $(objects)
+	$(CC) -o foo $(objects) $(libs)
+```
+
+&emsp;&emsp;分支关键字`ifdef`和`ifndef`的语法是：
+
+```makefile
+ifndef <variable-name>
+else
+endif
+```
+
+&emsp;&emsp;这里的 variable-name 可以是字面量，也可以是间接结果。`ifdef`只会测试变量是否有值，而不会展开变量，一个例子是：
+
+```makefile
+bar =
+foo = $(bar)
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+```
+
+&emsp;&emsp;frobozz 会被设置为 yes。
+
+```makefile
+foo =
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+```
+
+&emsp;&emsp;frobozz 会被设置为 no。
+
+## 使用函数
+
+&emsp;&emsp;Makefile 提供了一些内置的函数，可以完成一些复杂的工作。
