@@ -1,7 +1,7 @@
 ---
 title: Makefile
 date: 2023-10-01 19:57:29
-updated: 2023-11-05 13:51:45
+updated: 2023-11-06 21:42:10
 tags:
   - Make
   - C
@@ -468,7 +468,11 @@ bar.o : bar.c
 
 ## 条件分支
 
-&emsp;&emsp;条件分支在编程语言中很常见，Makefile 也支持一些基础的分支语法。
+&emsp;&emsp;条件分支在编程语言中很常见，make 支持基础的分支语句和分支函数。
+
+### 条件语句
+
+&emsp;&emsp;条件语句必须以一个条件表达式开始，中间可以有 else 分支，最后必须以`endif`关键字标记结束。make 支持的条件关键字有：`ifeq`, `ifneq`, `ifdef`, `ifndef`：前一对用于判断两个值是否相等 (或不等)，后一对用于判断一个变量是否有值 (或无值)。
 
 ```makefile
 <conditional-directive-one>
@@ -480,9 +484,7 @@ else
 endif
 ```
 
-&emsp;&emsp;条件分支必须以一个分支表达式开始，中间可以有 else 分支，最后必须以`endif`关键字标记结束。make 支持的分支关键字有：`ifeq`, `ifneq`, `ifdef`, `ifndef`：前一对用于判断两个值是否相等 (或不等)，后一对用于判断一个变量是否有值 (或无值)。
-
-&emsp;&emsp;分支关键字`ifeq`和`ifneq`的语法是：
+&emsp;&emsp;条件关键字`ifeq`和`ifneq`的语法是：
 
 ```makefile
 ifneq (arg1, arg2)
@@ -492,9 +494,7 @@ ifneq "arg1" 'arg2'
 ifneq 'arg1' "arg2"
 ```
 
-&emsp;&emsp;这里的 arg 可以是字面量，也可以是引用变量或调用函数接结果。
-
-&emsp;&emsp;一些例子：
+&emsp;&emsp;这里的 arg 可以是字面量，也可以是引用变量或调用函数接结果，一些例子：
 
 ```makefile
 libs_for_gcc = -lgnu
@@ -524,7 +524,7 @@ foo: $(objects)
 	$(CC) -o foo $(objects) $(libs)
 ```
 
-&emsp;&emsp;分支关键字`ifdef`和`ifndef`的语法是：
+&emsp;&emsp;条件关键字`ifdef`和`ifndef`的语法是：
 
 ```makefile
 ifndef <variable-name>
@@ -556,6 +556,63 @@ endif
 ```
 
 &emsp;&emsp;frobozz 会被设置为 no。
+
+### 条件函数
+
+&emsp;&emsp;条件函数是 make 中的一个内置函数，它基于上面的条件语句，但有函数的特性。make 有多个条件函数，它们的含义不同，但用法是类似的：
+
+1. if 函数
+
+```makefile
+$(if condition,then-part[,else-part])
+```
+
+&emsp;&emsp;if 函数有 3 个参数，第一个参数 *condition* 是一个被求值的语句，make 在求值时会去除该语句首尾的空格，然后判断结果是否是空字符串，若非空则为 true，否则为 false。第二个参数 *then-part* 是也一个语句，当 *condition* 的值为 true 时，*then-part* 会被求值。第三个参数 *else-part* 是可选的，当 *condition* 的值为 false 时，*else-part* 才会被求值。
+
+&emsp;&emsp;if 函数的返回值就是 *then-part* 或 *else-part* 的求值结果。
+
+2. or 函数
+
+```makefile
+$(or condition1[,condition2[,condition3…]])
+```
+
+&emsp;&emsp;or 函数的参数个数是可变的，并且参数都是语句。这是一种短路 OR 求值过程，类似 C 中的 || 逻辑运算。
+
+&emsp;&emsp;如果所有语句的求值结果都是空字符串，则 or 函数返回值就是空字符串。若遇到一个非空语句，则该语句的值会被当作 or 函数的返回值。
+
+
+3. and 函数
+
+```makefile
+$(and condition1[,condition2[,condition3…]])
+```
+
+&emsp;&emsp;and 函数的参数个数也是可变的，并且参数都是语句。这是一种短路 AND 求值过程，类似 C 中的 && 逻辑运算。
+
+&emsp;&emsp;如果所有语句的求值结果都是非空字符串，则 and 会返回最后一个参数的求值结果。若遇到一个空语句，则 and 函数的返回值就是空字符串。
+
+4. intcmp 函数
+
+&emsp;&emsp;intcmp 函数是 make 内唯一支持数值比较的函数，但它仅支持整数比较。
+
+```makefile
+$(intcmp lhs,rhs[,lt-part[,eq-part[,gt-part]]])
+```
+
+&emsp;&emsp;参数 *lhs* 和 *rhs* 都是必须的，而且求值结果必须为整数。intcmp 会以 *lhs* 为主体与 *rhs* 相比较，intcmp 函数的返回值是与比较结果关联的语句的值。
+
+&emsp;&emsp;注意：如果只传递给 intcmp 函数 4 个参数 (即少传递一个 *gt-part* 参数)。那么 intcmp 的语义类似下面的定义：
+
+```makefile
+$(intcmp lhs,rhs,lt-part,gt-part)
+```
+
+&emsp;&emsp;而不是想象中的：
+
+```makefile
+$(intcmp lhs,rhs,lt-part,eq-part)
+```
 
 ## 使用函数
 
