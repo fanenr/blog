@@ -1,7 +1,7 @@
 ---
 title: Git
 date: 2023-10-24 21:48:08
-updated: 2023-11-01 19:00:00
+updated: 2023-11-07 17:18:16
 tags:
   - Git
 categories:
@@ -93,26 +93,34 @@ git config --global alias.co checkout
 git config --global alias.unstage 'restore --staged'
 ```
 
-### 本地仓库
+### 创建仓库
 
-&emsp;&emsp;获取 Git 仓库的两种方法之一是使用 init 命令，它在本地初始化一个新的仓库：
+&emsp;&emsp;Git 的大部分操作都是在本地执行的，所以使用 Git 必须在本地拥有一个仓库。
+
+1. 初始化本地仓库
+
+&emsp;&emsp;使用 init 子命令在本地初始化一个新仓库：
 
 ```bash
 cd anydir
 git init
+
+# or 
+
+git init anydir
 ```
 
-&emsp;&emsp;它会创建一个 .git 目录用于存放仓库信息。
+&emsp;&emsp;它会在仓库目录下创建一个 .git 目录用于存放仓库信息。
 
-### 克隆仓库
+2. 克隆远程仓库
 
-&emsp;&emsp;另一种获取 Git 仓库的方法是使用 clone 命令，它克隆一个已有的仓库到本地：
+&emsp;&emsp;使用 clone 子命令克隆一个远程仓库到本地：
 
 ```bash
 git clone https://github.com/libgit2/libgit2
 ```
 
-&emsp;&emsp;这将在当前目录中创建一个 libgit2 子目录来存放该仓库，可以手动指定目录：
+&emsp;&emsp;这将在当前目录中创建一个 libgit2 子目录来存放该仓库。也可以手动指定仓库目录：
 
 ```bash
 git clone https://github.com/libgit2/libgit2 mydir
@@ -123,7 +131,9 @@ git clone https://github.com/libgit2/libgit2 .
 
 ### 查看状态
 
-&emsp;&emsp;一个 Git 仓库中所有文件只有两种状态：未跟踪和已跟踪。具体来说，已跟踪状态又分为 3 种，一个文件如果已被跟踪，则说明它已被纳入版本管理中。可以使用 status 命令查看仓库详细信息：
+&emsp;&emsp;一个 Git 仓库中所有文件只有两种状态：未跟踪和已跟踪。具体来说，已跟踪状态又分为 3 种，一个文件如果已被跟踪，则说明它已被纳入版本管理中。
+
+&emsp;&emsp;可以使用 status 子命令查看仓库详细信息：
 
 ```bash
 git status
@@ -133,7 +143,7 @@ git status
 
 ![](02.png)
 
-&emsp;&emsp;status 还支持简短形式的信息展示：
+&emsp;&emsp;status 命令还支持简短形式的信息展示：
 
 ```bash
 git status -s
@@ -203,31 +213,45 @@ git commit --amend
 
 &emsp;&emsp;它的效果就像：在原记录的基础上增加一条提交记录，然后删除原记录。如果修改提交时暂存区非空，则暂存区的内容会随着 --amend 一起被提交。
 
-### 取消暂存
+### 撤销操作
 
-&emsp;&emsp;reset 也是一个多功能命令，其中常用的一个功能就是取消暂存某个文件：
+&emsp;&emsp;包含两种撤销操作：撤销暂存区中的文件和撤销工作区中的文件。两种命令都可以使用 restore 命令完成，也可以使用 reset 或 checkout 命令完成。
 
-```bash
-git reset HEAD filename
-```
+1. 撤销暂存区中的文件
 
-&emsp;&emsp;这将把 filename 文件移出暂存区，并且使用 status 命令时也能看到提示。
+&emsp;&emsp;作用：将暂存区中的文件恢复为某次提交中的状态，默认是最近一次提交。
 
-&emsp;&emsp;在新版本的 Git 中已经推荐使用下面的命令取消暂存区中的文件：
+&emsp;&emsp;使用 restore 命令的 --staged 选项：
 
 ```bash
 git restore --staged filename
 ```
 
-### 检出文件
-
-&emsp;&emsp;checkout 支持的功能非常多，可以使用它来放弃工作区中的修改，以上一次提交时的状态恢复它：
+&emsp;&emsp;撤销暂存区中的所有文件：
 
 ```bash
-git checkout -- filename
+git resotre --staged .
 ```
 
-&emsp;&emsp;如果 filename 已被修改 (但未暂存)，那么 checkout -- 命令将丢弃这些修改，并将恢复它到上一次提交时的状态。
+1. 撤销工作区中的文件
+
+&emsp;&emsp;作用：将工作区中的文件恢复为暂存区中的状态。
+
+&emsp;&emsp;使用不带选项的 restore 命令：
+
+```bash
+git restore <file>
+```
+
+&emsp;&emsp;一次性撤销所有文件：
+
+```bash
+git restore .
+```
+
+&emsp;&emsp;注意：这两个操作的交集是暂存区，它们都不影响 HEAD 指向和分支指向。当在暂存区撤销文件时，不会影响工作区。当在工作区撤销文件时，不会影响暂存区。如果要同时撤销暂存区和工作区的所有文件，可以使用 checkout 命令或 reset 命令，但要注意它们的风险：
+
+![](06.png)
 
 ### 远程仓库
 
@@ -536,4 +560,73 @@ git stash pop
 ```
 
 &emsp;&emsp;pop 会取出最近一次贮藏记录，然后立即删除它。
+
+### 标签
+
+&emsp;&emsp;标签和分支一样轻量：它只是指向某个提交的标记，但标签不随着提交而移动。
+
+&emsp;&emsp;标签有两种：轻量标签和附注标签。轻量标签就是一个简单的不动指针，它简单的指向某个提交。而附注标签不同，后者是存在于 Git 中的一个数据对象：附注标签中包含打标签者的名字、电子邮件地址、日期时间， 此外还有一个标签信息，并且可以使用 GPG 签名并验证。
+
+1. 创建标签
+
+&emsp;&emsp;使用 tag 子命令为一个提交创建轻量标签：
+
+```bash
+git tag tag-name
+git tag tag-name <commit-hash>
+```
+
+&emsp;&emsp;第一种写法会为当前提交创建标签，第二种写法可以为指定提交创建标签。
+
+&emsp;&emsp;使用 tag 子命令的 -a 选项创建一个附注标签：
+
+```bash
+git tag -a tag-name
+git tag -a tag-neme -m "message" <commit-hash>
+```
+
+&emsp;&emsp;创建附注标签必须提供附注信息，如果没有通过 -m 选项直接提供信息，Git 就会启动默认编辑器。
+
+2. 删除标签
+
+&emsp;&emsp;使用 tag 子命令的 -d 选项删除一个标签：
+
+```bash
+git tag -d tag-name
+```
+
+3. 列出标签
+
+&emsp;&emsp;使用 tag 子命令查看仓库所有标签：
+
+```bash
+git tag
+```
+
+&emsp;&emsp;空的 tag 命令会按字母顺序列出所有标签。如果需要按模式列出标签，可以使用 -l 选项：
+
+```bash
+git tag -l "v1.0*"
+```
+
+4. 远程标签
+
+&emsp;&emsp;可以使用 push 子命令将本地标签推送到远程仓库：
+
+```bash
+git push <remote> tag-name
+git push <remote> <local-tag>:<remote-tag>
+```
+
+&emsp;&emsp;如果要一次性推送所有的本地标签到远程仓库，可以使用 --tags 选项：
+
+```bash
+git push <remote> --tags
+```
+
+&emsp;&emsp;和在远程仓库中删除分支一样，删除远程仓库中标签的语法是：
+
+```bash
+git push <remote> :tag-name
+```
 
