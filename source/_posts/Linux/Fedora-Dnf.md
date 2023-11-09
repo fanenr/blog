@@ -1,7 +1,7 @@
 ---
 title: Fedora Dnf
 date: 2023-10-21 10:52:18
-updated: 2023-10-22 19:00:00
+updated: 2023-11-09 18:02:09
 tags:
   - Fedora
 categories:
@@ -19,23 +19,23 @@ categories:
 &emsp;&emsp;别名：`in`
 
 ```bash
-dnf [options] install <spec>...
+sudo dnf [options] install <spec>...
 ```
 
 &emsp;&emsp;例子：
 
 ```bash
-dnf install tito
+sudo dnf install tito
 
 # install from local file
 # also support network URL
-dnf install ~/Downloads/tito.rpm
+sudo dnf install ~/Downloads/tito.rpm
 
 # install specify version
-dnf install tito-0.5.6-1.fc22
+sudo dnf install tito-0.5.6-1.fc22
 
 # install Group or Module
-dnf install '@docker'
+sudo dnf install '@docker'
 ```
 
 &emsp;&emsp;命令：`reinstall`
@@ -43,8 +43,7 @@ dnf install '@docker'
 &emsp;&emsp;别名：`rei`
 
 ```bash
-dnf [options] in <spec>...
-dnf [options] reinstall <package-spec>...
+sudo dnf [options] reinstall <package-spec>...
 ```
 
 ## 卸载
@@ -54,18 +53,18 @@ dnf [options] reinstall <package-spec>...
 &emsp;&emsp;别名：`rm`
 
 ```bash
-dnf [options] remove <package-spec>...
+sudo dnf [options] remove <package-spec>...
 ```
 
-&emsp;&emsp;remove 默认启用选项 clean_requirements_on_remove。启用这个选项时，remove 将会自动卸载与该软件包相关的但是`不用`的其他依赖包。
+&emsp;&emsp;remove 默认启用 clean_requirements_on_remove 选项。启用这个选项时，remove 将会自动卸载与该软件包相关的但是`不被使用`的其他软件包。
 
 &emsp;&emsp;命令：`autoremove`
 
 ```bash
 # remove all unused packages
-dnf [options] autoremove
+sudo dnf [options] autoremove
 
-dnf [options] autoremove <spec>...
+sudo dnf [options] autoremove <spec>...
 ```
 
 &emsp;&emsp;如上所言，默认的 remove 就是 autoremove 的别名。
@@ -78,12 +77,12 @@ dnf [options] autoremove <spec>...
 
 ```bash
 # upgrade all upgradeable packages
-dnf [options] upgrade
+sudo dnf [options] upgrade
 
-dnf [options] upgrade <package-spec>...
+sudo dnf [options] upgrade <package-spec>...
 
 # upgrade module
-dnf [options] upgrade @<spec>...
+sudo dnf [options] upgrade @<spec>...
 ```
 
 &emsp;&emsp;其实`update`是一个已经废弃的别名。
@@ -118,7 +117,7 @@ dnf [options] info [<package-file-spec>...]
 dnf history [list] [--reverse] [<spec>...]
 ```
 
-##　清理
+## 清理
 
 &emsp;&emsp;命令：`remove`
 
@@ -128,7 +127,52 @@ dnf history [list] [--reverse] [<spec>...]
 # will take a long time
 sudo dnf rm --duplicates
 
+# can clean old kernels
 sudo dnf rm --oldinstallonly
 ```
 
-&emsp;&emsp;一般情况下，rm 一个特定软件包时会自动删除相关依赖。oldinstallonly 选项可以用来删除旧内核镜像。
+&emsp;&emsp;一般情况下，remove 一个特定软件包时会自动删除相关无用依赖。oldinstallonly 选项可以用来删除旧内核镜像。
+
+## 更新系统
+
+1. 更新发行版
+
+&emsp;&emsp;命令：`upgrade --refresh`
+
+```bash
+sudo dnf upgrade --refresh
+```
+
+&emsp;&emsp;Docs 说运行后要 reboot，不确定是否需要。
+
+2. 下载更新插件
+
+&emsp;&emsp;命令：`install dnf-plugin-system-upgrade`
+
+```bash
+sudo dnf install dnf-plugin-system-upgrade
+```
+
+&emsp;&emsp;如果已经安装了，可以跳过。
+
+3. 下载新软件包
+
+&emsp;&emsp;命令：`system-upgrade download --releasever=39`
+
+```bash
+sudo dnf system-upgrade download --releasever=39
+```
+
+&emsp;&emsp;可以跨版本更新，如从 37 直接到 39。
+
+4. 重启更新
+
+&emsp;&emsp;命令：`system-upgrade reboot`
+
+```bash
+sudo dnf system-upgrade reboot
+```
+
+5. 清理
+
+&emsp;&emsp;参见清理。
