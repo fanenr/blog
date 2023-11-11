@@ -1,12 +1,12 @@
 ---
-title: Guide - 关于博客
+title: 关于博客
 date: 2023-09-07 21:11:44
-updated: 2023-10-25 19:00:00
+updated: 2023-11-11 17:48:55
 tags:
   - Life
 categories:
   - Life
-sticky: 1
+sticky: 10
 ---
 
 &emsp;&emsp;本站所有文章基本上都是纯手打，逐句斟酌的，大部分图片内容都是手工截图的。
