@@ -1,7 +1,7 @@
 ---
 title: Fedora Backup
 date: 2023-10-16 20:46:42
-updated: 2023-10-17 19:00:00
+updated: 2023-12-28 19:00:00
 tags:
   - Fedora
 categories:
@@ -20,16 +20,16 @@ categories:
 | -------------------------------------------- | -------------------------- |
 | Top Hat                                      | 窗口顶栏的资源可视化工具。 |
 | Extension List                               | 窗口顶栏的插件小工具。     |
-| Transparent Topbar                           | 窗口顶栏透明背景。         |
-| Clipboard Indicator                          | 窗口顶栏的剪切板小工具。   |
+| Transparent Topbar                           | 透明窗口背景。             |
+| Clipboard Indicator                          | 剪切板小工具。             |
 | Places Status Indicator                      | 窗口顶栏的快捷地址工具。   |
 | User Avatar In Quick Settings                | 用户头像附近的快捷设置。   |
-| AppIndicator and KStatusNotifierItem Support | 窗口顶栏的小图标。         |
+| AppIndicator and KStatusNotifierItem Support | 应用托盘显示。             |
 | Caffeine                                     | 关闭桌面定时关闭。         |
-| Blur My Shell                                | 毛玻璃效果。               |
 | User Themes                                  | 开启第三方主题支持。       |
-| Dash To Dock                                 | 开启 Dock 支持。           |
 | RebootToUEFI                                 | 重启到 UEFI 的快捷键。     |
+| Dash To Dock                                 | 开启 Dock 支持。           |
+| Blur My Shell                                | 毛玻璃效果。               |
 | Coverflow Alt-Tab                            | 工作区切换动画。           |
 | Launch new instance                          | 总是启动一个新实例。       |
 | Compiz windows effect                        | 窗口拖动动画。             |
