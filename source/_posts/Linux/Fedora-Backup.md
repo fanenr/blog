@@ -20,9 +20,7 @@ categories:
 | -------------------------------------------- | -------------------------- |
 | Top Hat                                      | 窗口顶栏的资源可视化工具。 |
 | Extension List                               | 窗口顶栏的插件小工具。     |
-| Transparent Topbar                           | 透明窗口背景。             |
 | Clipboard Indicator                          | 剪切板小工具。             |
-| Places Status Indicator                      | 窗口顶栏的快捷地址工具。   |
 | User Avatar In Quick Settings                | 用户头像附近的快捷设置。   |
 | AppIndicator and KStatusNotifierItem Support | 应用托盘显示。             |
 | Caffeine                                     | 关闭桌面定时关闭。         |
@@ -31,7 +29,6 @@ categories:
 | Dash To Dock                                 | 开启 Dock 支持。           |
 | Blur My Shell                                | 毛玻璃效果。               |
 | Coverflow Alt-Tab                            | 工作区切换动画。           |
-| Launch new instance                          | 总是启动一个新实例。       |
 | Compiz windows effect                        | 窗口拖动动画。             |
 
 ## Theme
@@ -49,10 +46,9 @@ categories:
 
 &emsp;&emsp;这不是要修改界面显示字体，而是修复国内部分软件中文乱码的问题。Fedora 默认装的字体大部分是先进的可变字体，可惜很多软件：QQ 音乐，欧陆词典，WPS 等都不支持。导致出现小方块，无法使用。
 
-&emsp;&emsp;两步即可，其实就是把 sans 字体改成非可变版本：
+&emsp;&emsp;安装 sans 字体的非可变版本：
 
 ```bash
-sudo dnf remove google-noto-sans-cjk-vf-fonts.noarch
 sudo dnf install google-noto-sans-cjk-fonts.noarch
 ```
 
