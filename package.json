@@ -11,17 +11,15 @@
   },
   
   "hexo": {
-    "version": "6.3.0"
+    "version": "7.0.0"
   },
   
   "dependencies": {
     "css": "latest",
-    "hexo": "6.3.0",
+    "hexo": "7.0.0",
     "pjax": "latest",
     
     "hexo-server": "latest",
-    "hexo-word-counter": "latest",
-    
     "hexo-theme-next": "latest",
     "hexo-waline-next": "latest",
     
