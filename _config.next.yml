@@ -372,7 +372,7 @@ codeblock:
   copy_button:
     enable: true
     # Available values: default | flat | mac
-    style: flat
+    style: default
   # Fold code block
   fold:
     enable: true
@@ -666,147 +666,45 @@ canvas_ribbon:
 comments:
   # Available values: tabs | buttons
   style: tabs
-  # Choose a comment system to be displayed by default.
-  # Available values: disqus | disqusjs | changyan | livere | gitalk | utterances
   active: disqus
-  # Setting `true` means remembering the comment system selected by the visitor.
   storage: true
-  # Lazyload all comment systems.
   lazyload: false
-  # Modify texts or order for any naves, here are some examples.
   nav:
-    #disqus:
-    #  text: Load Disqus
-    #  order: -1
-    #gitalk:
-    #  order: -2
 
 # Waline Config File
-# For more information:
-# - https://waline.js.org
-# - https://waline.js.org/reference/component.html
 waline:
-  # New! Whether enable this plugin
   enable: true
-  
-  # article reaction
   reaction: true
-  
-  # dark mode
   dark: auto
-  
-  # Waline server address url, you should set this to your own link
-  serverURL: https://waline.arthur63.top/
-  
-  # Waline library CDN url, you can set this to your preferred CDN
-  libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
 
-  # Waline CSS styles CDN url, you can set this to your preferred CDN
+  serverURL: https://waline.arthur63.top/
+  libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
   cssUrl: https://unpkg.com/@waline/client@v2/dist/waline.css
 
-  # Custom locales
-  # locale:
-  #   placeholder: Welcome to comment # Comment box placeholder
-
-  # If false, comment count will only be displayed in post page, not in home page
+  lang: zh-CN
+  login: enable
+  pageSize: 10
+  pageview: true
   commentCount: true
 
-  # Pageviews count, Note: You should not enable both `waline.pageview` and `leancloud_visitors`.
-  pageview: true
+  locale:
+    placeholder: Welcome to comment # Comment box placeholder
 
-  # Custom emoji
-  # emoji:
-  #   - https://unpkg.com/@waline/emojis@1.0.1/weibo
-  #   - https://unpkg.com/@waline/emojis@1.0.1/alus
-  #   - https://unpkg.com/@waline/emojis@1.0.1/bilibili
-  #   - https://unpkg.com/@waline/emojis@1.0.1/qq
-  #   - https://unpkg.com/@waline/emojis@1.0.1/tieba
-  #   - https://unpkg.com/@waline/emojis@1.0.1/tw-emoji
-
-  # Comment infomation, valid meta are nick, mail and link
   # meta:
   #   - nick
   #   - mail
   #   - link
 
-  # Set required meta field, e.g.: [nick] | [nick, mail]
   # requiredMeta:
   #   - nick
 
-  # Language, available values: en-US, zh-CN, zh-TW, pt-BR, ru-RU, jp-JP
-  lang: zh-CN
-
-  # Word limit, no limit when setting to 0
   # wordLimit: 0
 
-  # Whether enable login, can choose from 'enable', 'disable' and 'force'
-  login: enable
-
-  # comment per page
-  # pageSize: 10
-
 # Disqus
-# For more information: https://disqus.com
 disqus:
   enable: false
   shortname: arthur63
   count: true
-
-# DisqusJS
-# For more information: https://disqusjs.skk.moe
-disqusjs:
-  enable: false
-  # API Endpoint of Disqus API (https://disqus.com/api/docs/).
-  # Leave api empty if you are able to connect to Disqus API. Otherwise you need a reverse proxy for it.
-  # For example:
-  # api: https://disqus.skk.moe/disqus/
-  api:
-  apikey: # Register new application from https://disqus.com/api/applications/
-  shortname: # See: https://disqus.com/admin/settings/general/
-
-# Changyan
-# For more information: https://changyan.kuaizhan.com
-changyan:
-  enable: false
-  appid:
-  appkey:
-  # Show comments count
-  count: true
-
-# LiveRe comments system
-# You can get your uid from https://livere.com/insight/myCode (General web site)
-livere_uid: # <your_uid>
-
-# Gitalk
-# For more information: https://gitalk.github.io
-gitalk:
-  enable: false
-  github_id: # GitHub repo owner
-  repo: # Repository name to store issues
-  client_id: # GitHub Application Client ID
-  client_secret: # GitHub Application Client Secret
-  admin_user: # GitHub repo owner and collaborators, only these guys can initialize gitHub issues
-  distraction_free_mode: true # Facebook-like distraction free mode
-  # When the official proxy is not available, you can change it to your own proxy address
-  proxy: https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token # This is official proxy address
-  # Gitalk's display language depends on user's browser or system environment
-  # If you want everyone visiting your site to see a uniform language, you can set a force language value
-  # Available values: en | es-ES | fr | ru | zh-CN | zh-TW
-  language:
-
-# Utterances
-# For more information: https://utteranc.es
-utterances:
-  enable: false
-  repo: user-name/repo-name # Github repository owner and name
-  # Available values: pathname | url | title | og:title
-  issue_term: pathname
-  # Available values: github-light | github-dark | preferred-color-scheme | github-dark-orange | icy-dark | dark-blue | photon-dark | boxy-light
-  theme: github-light
-
-# Isso
-# For more information: https://isso-comments.de
-isso: # <data_isso>
 
 
 # ---------------------------------------------------------------
