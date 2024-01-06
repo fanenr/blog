@@ -1,7 +1,7 @@
 ---
 title: Git
 date: 2023-10-24 21:48:08
-updated: 2023-11-07 17:18:16
+updated: 2024-01-06 11:18:34
 tags:
   - Git
 categories:
@@ -630,3 +630,53 @@ git push <remote> --tags
 git push <remote> :tag-name
 ```
 
+### 变基
+
+&emsp;&emsp;变基操作是除合并操作外的另一个分枝整合方案，合并操作完成的是一个三向合并，它最大限度的保留了每个分枝的每个提交信息的完整，但是一旦分枝多了起来，合并操作会让整个提交树十分复杂。
+
+&emsp;&emsp;变基不同于合并的是：它将当前分枝与变基目标分枝有分歧的提交全部拿出来，然后加在目标分枝的最后。此时目标分枝就成了当前分枝的祖先，目标分枝可以执行快速向前合并，整个提交树就像一条直线一样。
+
+1. 直接变基
+
+&emsp;&emsp;使用 rebase 子命令，再加上一个目标分枝，可以把当前分枝变基到目标分枝上：
+
+```bash
+git checkout dev
+git rebase master
+```
+
+&emsp;&emsp;如果变基成功，那么现在 master 分枝将是 dev 分枝的祖先。
+
+&emsp;&emsp;另一种语法是：
+
+```bash
+git rebase master dev
+```
+
+2. 高级用法
+
+&emsp;&emsp;rebase 命令的 --onto 选项是变基的一个高级用法，它涉及 3 个分枝：目标分枝，其他分枝和变基分枝。主要目的当然还是将变基分枝变基到目标分枝上。但是它只会挑选变基分枝和其他分枝产生分歧之后的提交，并将这些提交变基到目标分枝上。
+
+&emsp;&emsp;如果有 3 个分枝：master, server, client。
+
+![](07.png)
+
+&emsp;&emsp;执行以下命令的效果是：
+
+```bash
+git rebase master server client
+```
+
+![](07.png)
+
+&emsp;&emsp;这么做的目的是：只想将 client 分枝整合到 master 中，但是不想包含 server 分枝的提交内容。
+
+3. 常用配置
+
+&emsp;&emsp;在协作开发中，从远程拉取分枝再将本地分枝变基到远程主分枝是如此常见。完成这个操作需要先 fetch 再 rebase，但是 pull 命令默认执行 merge 而不是 rebase。
+
+&emsp;&emsp;可以执行下列命令改变配置信息，让 pull 拉取分枝后执行 rebase：
+
+```bash
+git config --global pull.rebase true
+```

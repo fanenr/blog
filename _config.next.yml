@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------
 # Theme Core Configuration Settings
-# See: https://theme-next.js.org/docs/theme-settings/
 # ---------------------------------------------------------------
 
 # Allow to cache content generation.
@@ -210,7 +209,6 @@ github_banner:
 
 font:
   enable: true
-
   host:
 
   global:
