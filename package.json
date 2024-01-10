@@ -31,6 +31,8 @@
     
     "hexo-renderer-ejs": "latest",
     "hexo-renderer-stylus": "latest",
-    "hexo-renderer-markdown-it": "latest"
+    "hexo-renderer-markdown-it": "latest",
+    
+    "@renbaoshuo/markdown-it-katex": "latest"
   }
 }
