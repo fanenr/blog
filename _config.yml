@@ -100,4 +100,7 @@ markdown:
     - markdown-it-sub
     - markdown-it-sup
     - markdown-it-footnote
+    - name: '@renbaoshuo/markdown-it-katex'
+      options:
+        skipDelimitersCheck: true
 
