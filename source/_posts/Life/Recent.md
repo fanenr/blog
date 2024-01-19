@@ -6,7 +6,6 @@ tags:
   - Life
 categories:
   - Life
-sticky: 9
 ---
 
 &emsp;&emsp;最近事有点多，没怎么学习技术和更新博客。
