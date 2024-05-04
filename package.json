@@ -2,21 +2,20 @@
   "name": "hexo-site",
   "version": "0.0.1",
   "private": true,
-
+  
   "scripts": {
     "clean": "hexo clean",
-    "deploy": "hexo deploy",
     "server": "hexo server",
     "build": "hexo generate"
   },
   
   "hexo": {
-    "version": "7.0.0"
+    "version": "7.2.0"
   },
   
   "dependencies": {
     "css": "latest",
-    "hexo": "7.0.0",
+    "hexo": "latest",
     "pjax": "latest",
     
     "hexo-server": "latest",
