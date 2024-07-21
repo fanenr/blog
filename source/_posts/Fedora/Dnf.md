@@ -1,14 +1,15 @@
 ---
-title: Fedora Dnf
+title: Dnf
 date: 2023-10-21 10:52:18
-updated: 2023-11-09 18:02:09
+updated: 2024-07-21 10:02:05
 tags:
   - Fedora
+  - Linux
 categories:
-  - [Linux, Fedora]
+  - Fedora
 ---
 
-&emsp;&emsp;一些必备且常用的 Dnf 用法。
+&emsp;&emsp;必备且常用的 Dnf 用法。
 
 <!-- more -->
 

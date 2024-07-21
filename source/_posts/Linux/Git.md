@@ -1,11 +1,11 @@
 ---
 title: Git
 date: 2023-10-24 21:48:08
-updated: 2024-01-06 11:18:34
+updated: 2024-07-21 10:25:51
 tags:
   - Git
 categories:
-  - [Linux, Tool]
+  - Linux
 ---
 
 &emsp;&emsp;一些必备且常用的 Git 知识。
