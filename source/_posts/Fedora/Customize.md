@@ -31,6 +31,7 @@ categories:
 | RebootToUEFI                                 | 重启到 UEFI          |
 | Dash to Dock                                 | Dock 支持            |
 | Dash to Panel                                | 更好的顶栏           |
+| GSConnect                                    | KDEConnect 移植版    |
 | Blur my Shell                                | 毛玻璃效果           |
 | Burn My Windows                              | 窗口开关动画         |
 | Coverflow Alt-Tab                            | 工作区切换动画       |
