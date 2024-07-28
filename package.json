@@ -10,7 +10,7 @@
   },
   
   "hexo": {
-    "version": "7.2.0"
+    "version": "7.3.0"
   },
   
   "dependencies": {
@@ -21,7 +21,6 @@
     "hexo-server": "latest",
     "hexo-theme-next": "latest",
     "hexo-waline-next": "latest",
-    
     "hexo-generator-tag": "latest",
     "hexo-generator-index": "latest",
     "hexo-generator-archive": "latest",
@@ -31,7 +30,6 @@
     "hexo-renderer-ejs": "latest",
     "hexo-renderer-stylus": "latest",
     "hexo-renderer-markdown-it": "latest",
-    
     "@renbaoshuo/markdown-it-katex": "latest"
   }
 }
