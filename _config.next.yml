@@ -138,7 +138,7 @@ symbols_count_time:
 # Post edit
 post_edit:
   enable: true
-  url: https://github.com/fanenr/fanenr.github.io/edit/master/source/
+  url: https://github.com/fanenr/blog/edit/master/source/
 
 post_navigation: left
 
@@ -339,7 +339,7 @@ waline:
   reaction: true
   dark: auto
 
-  serverURL: https://waline.arthur63.top/
+  serverURL: https://waline.arthur63.cc/
   libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
   cssUrl: https://unpkg.com/@waline/client@v2/dist/waline.css
 

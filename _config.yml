@@ -10,10 +10,10 @@ subtitle: 'just a blog'
 # URL
 permalink: :title/
 permalink_defaults:
-url: https://arthur63.top/
+url: https://arthur63.cc/
 pretty_urls:
-  trailing_index: true
   trailing_html: true
+  trailing_index: true
 
 # Directory
 skip_render:
