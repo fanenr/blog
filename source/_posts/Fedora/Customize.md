@@ -54,9 +54,7 @@ categories:
 
 ## Fonts
 
-&emsp;&emsp;Fedora 预装的是可变字体，很多软件：QQ音乐，欧陆词典，WPS 等都不支持，导致界面出现小方块，无法使用。
-
-&emsp;&emsp;安装非可变版本的 sans 字体可以解决：
+&emsp;&emsp;Fedora 预装的是可变字体，很多软件，如 QQ音乐，欧陆词典，WPS 等都不支持可变字体，导致界面出现小方块，无法使用。安装非可变版本的 sans 字体可以解决：
 
 ```bash
 sudo dnf install google-noto-sans-cjk-fonts
@@ -77,3 +75,32 @@ sudo dnf install google-noto-sans-cjk-fonts
 ### Rime
 
 &emsp;&emsp;libpinyin 虽然简单，但是扩展性不够好 (稳定性也一般)。rime 是另一个较好的选择，它支持插件以及很多其他扩展功能，并且词库同步也很方便，使用 DNF 安装 ibus-rime。
+
+## Desktop
+
+&emsp;&emsp;无论是 DNF 还是 Flatpak，提供的软件包其实都相当有限。很多工具，如 Eudic，Nekobox，Chatbox 等都没有提供 rpm 或者 flatpak 包，这时候就需要手动配置 desktop 文件，使其像其他应用一样正常显示在 App 菜单中。
+
+1. 获得可执行文件：通常在官网或者 GitHub 上下载可执行文件或 Apppimage 文件。
+2. 制作 desktop 文件，下面是我常用的模板：
+
+```ini
+# ~/.local/share/applications/eudic.desktop
+
+[Desktop Entry]
+Name=Eudic
+Terminal=false
+Type=Application
+
+Comment=Eudic
+Categories=Utility;
+StartupWMClass=Eudic
+
+Exec=/home/arthur/.local/share/apps/eudic/apprun
+Icon=/home/arthur/.local/share/apps/eudic/icon.png
+```
+
+&emsp;&emsp;重点有三个：Exec，Icon 和 StartupWMClass。Exec 是应用的启动命令，我一般都会在相应文件夹内创建一个 apprun 脚本来统一处理。Icon 是应用的图标路径，我将其和 apprun 放在一起。
+
+&emsp;&emsp;StartupWMClass 是系统用来区分运行中应用的标识：如果某个应用启动了两个窗口，若其真实的 StartupWMClass 与 desktop 文件中的相同，则在 Dock 栏中只占一个位置，否则会占两个 Dock 栏位置。
+
+&emsp;&emsp;对于 Wayland 应用，查询 StartupWMClass 可以使用插件`Looking Glass Button`。
