@@ -1,23 +1,17 @@
 {
-  "name": "hexo-site",
-  "version": "0.0.1",
+  "name": "blog",
+  "version": "0",
   "private": true,
-  
   "scripts": {
-    "clean": "hexo clean",
-    "server": "hexo server",
     "build": "hexo generate"
   },
-  
   "hexo": {
-    "version": "7.3.0"
+    "version": "8.0.0"
   },
-  
   "dependencies": {
     "css": "latest",
     "hexo": "latest",
     "pjax": "latest",
-    
     "hexo-server": "latest",
     "hexo-theme-next": "latest",
     "hexo-waline-next": "latest",
@@ -26,7 +20,6 @@
     "hexo-generator-archive": "latest",
     "hexo-generator-category": "latest",
     "hexo-generator-searchdb": "latest",
-    
     "hexo-renderer-ejs": "latest",
     "hexo-renderer-stylus": "latest",
     "hexo-renderer-markdown-it": "latest",

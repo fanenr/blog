@@ -333,28 +333,9 @@ comments:
   lazyload: false
   nav:
 
-# Waline Config File
-waline:
-  enable: true
-  reaction: true
-  dark: auto
-
-  serverURL: https://waline.arthur63.cc/
-  libUrl: https://unpkg.com/@waline/client@v2/dist/waline.js
-  cssUrl: https://unpkg.com/@waline/client@v2/dist/waline.css
-
-  lang: zh-CN
-  login: enable
-  pageSize: 10
-  pageview: true
-  commentCount: true
-
-  locale:
-    placeholder: Welcome to comment
-
 # Disqus
 disqus:
-  enable: false
+  enable: true
   shortname: arthur63
   count: true
 
